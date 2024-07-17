@@ -54,14 +54,13 @@ def plot_all(adata, keys):
         print(f"Error saving {name} for highest_expr_genes: {e}", flush=True)
 
 
-def plot_celltype(adata, celltype, key):
-    subset = adata[adata.obs['celltype'] == celltype, :]
-    # key = subset.obs[key].tolist()
+def plot_celltype(adata, celltype: str, key: str):
+    subset = adata[adata.obs['RNA.Class.Jun21_2024'] == celltype, :]
     try:
-        func(adata, color=subset.obs[key], save=f'_{DATASET}_{celltype}_{key}_.png')
-        print(f"{name} saved for celltypes!", flush=True)
+        func(subset, color=key, save=f'_{DATASET}_{celltype}_{key}.png')
+        print(f"{name} saved for {celltype}!", flush=True)
     except Exception as e:
-        print(f"Error saving {name} for celltypes: {e}", flush=True)
+        print(f"Error saving {name} for {celltype}: {e}", flush=True)
 
 def plot_celltypes(adata):
     for type in adata.obs['RNA.Class.Jun21_2024'].unique():
