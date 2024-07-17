@@ -3,6 +3,7 @@ import os
 from utils import *
 from preprocessing import *
 import numpy as np
+import matplotlib.pyplot as plt
 
 init_settings()
 
@@ -14,10 +15,12 @@ print(adata, flush=True)
 # plotting function
 # name, func = 'TSNE', log(sc.pl.tsne)
 # name, func = 'PCA', log(sc.pl.pca)
-name, func = 'UMAP', log(sc.pl.umap)
+# name, func = 'UMAP', log(sc.pl.umap)
+name, func = 'heatmap', log(sc.pl.heatmap)
 
 variables = ['leiden_clust', 'bmi_lv', 'log1p_total_counts', 'log1p_n_genes_by_counts', 'region', 'batch']
 highest_expr_genes = ['MALAT1', 'PCDH9', 'KCNIP4', 'CADM2', 'IL1RAPL1', 'DLG2', 'МТ-СО3', 'МТ-СО2', 'RBFOX1', 'SNHG14', 'CSMD1', 'CNTNAP2', 'МТ-АТР6', 'MAGI2', 'NRXN3', 'PTPRD', 'LSAMP', 'ADGRB3', 'NRG3', 'MT-CO1']
+highest_expr_genes = [gene for gene in highest_expr_genes if gene in adata.var_names]
 cell_types = ['RNA.Subtype.Jun21_2024', 'RNA.Class.Jun21_2024', 'RNA.Subclass.Jun21_2024']
 
 def plot(adata, key):
@@ -69,4 +72,7 @@ def plot_celltypes(adata):
 
 if __name__ == "__main__":
     # plot_all(adata, highest_expr_genes)
-    plot_celltypes(adata)
+    # plot_celltypes(adata)
+    sc.pl.dotplot(adata, adata.var_names, groupby='RNA.Class.Jun21_2024', standard_scale='var', save=f'_{DATASET}.png')
+    sc.pl.matrixplot(adata, adata.var_names, groupby='RNA.Class.Jun21_2024', standard_scale='var', save=f'_{DATASET}.png')
+    plot(adata, 'RNA.Class.Jun21_2024')
