@@ -15,6 +15,8 @@ def categorize_bmi(adata):
 groups = [g1, g2, g3, g4]
 
 highest_expr_genes = log(sc.pl.highest_expr_genes)
+obesity_genes = [tup[-1] for tup in adata.uns['rank_genes_groups']['names']][:20]
+anti_obesity_genes = [tup[0] for tup in adata.uns['rank_genes_groups']['names']][:20]
 
 for group, name in zip(groups, ['bmi_30+', 'bmi_25-30', 'bmi_20-25', 'bmi_<20']):
     print(f"Number of cells in group {group.obs['bmi_lv'].unique()[0]}: {len(group)}")
