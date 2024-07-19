@@ -1,29 +1,4 @@
-import scanpy as sc
-import os
-from utils import *
-
-###################################
-
-DATASET = "AD427"
-PATH = "/home/anna_y/data/HumanBrainObesity/snRNA/"
-FILENAME = "rna2.AD427_ADMR.QC.3343094.Jun24_2024.h5ad"
-
-###################################
-
-def init_settings():
-    sc.settings.verbosity = 3  # verbosity: errors (0), warnings (1), info (2), hints (3)
-    sc.logging.print_header()
-    sc.settings.set_figure_params(dpi=80, facecolor="white")
-
-@log
-def load_data(dataset, path):
-    adata = sc.read_h5ad(path)
-    adata.var_names_make_unique()
-
-    # results_file = f"/home/anna_y/data/write/{dataset}.h5ad"  # the file that will store the analysis results
-    # adata.write(results_file)
-
-    return adata
+from init import *
 
 @log
 def preprocess(adata):
@@ -39,14 +14,6 @@ def preprocess(adata):
     return adata
 
 if __name__ == "__main__":
-    init_settings()
-
-    adata = load_data(DATASET, PATH + FILENAME)
-    results_file = f"/home/anna_y/data/write/{DATASET}_new.h5ad"  # the file that will store the analysis results
-    adata.write(results_file)
-
-    print(adata, flush=True)
-
     adata = preprocess(adata)
     print(adata, flush=True)
 
