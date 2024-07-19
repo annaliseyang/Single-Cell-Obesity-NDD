@@ -4,6 +4,7 @@ from utils import *
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 ###################################
 
@@ -31,6 +32,7 @@ def load_data(dataset, path):
     return adata
 
 init_settings()
-adata = load_data(DATASET, f'/home/anna_y/data/write/processed_{DATASET}_Jun17_2024.h5ad')
+# adata = load_data(DATASET, f'/home/anna_y/data/write/processed_{DATASET}_Jun17_2024.h5ad')
+adata = load_data(DATASET, '/home/anna_y/data/write/AD427_ADMR_meta_Jul19_2024.h5ad')
 print("Data loaded!", flush=True)
 print(adata, flush=True)
