@@ -38,7 +38,7 @@ def plot_each(adata, keys):
         except Exception as e:
             print(f"Error saving {name} for {key}: {e}", flush=True)
 
-def plot_all(adata, keys):
+def plot_all(adata, keys, save=None):
     keys = [key for key in keys if key in adata.var_names]
     try:
         func(adata, color=keys, vmax='p99', save=f'_{DATASET}_highest_expr_genes.png')

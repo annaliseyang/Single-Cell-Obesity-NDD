@@ -80,12 +80,16 @@ def plot_bmi_AD(adata):
     plt.savefig('figures/boxplot_bmi_AD_unique.png')
 
 
-def plot_bmi_pathology(adata, pathology_col):
+def plot_bmi_pathology(adata, column):
+    '''
+    plot bmi vs pathology for unique projids, return dataframe with bmi and pathology
+    column is a categorical column like 'ADdiag3types' or 'ADdiag2types
+    '''
     unique_projids = adata.obs['projid'].unique()
-    unique_bmi_pathology = adata.obs[['projid', 'bmi_lv', pathology_col]].loc[adata.obs['projid'].isin(unique_projids)].drop_duplicates()
+    unique_bmi_pathology = adata.obs[['projid', 'bmi_lv', column]].loc[adata.obs['projid'].isin(unique_projids)].drop_duplicates()
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.boxplot(data=unique_bmi_pathology, x=pathology_col, y='bmi_lv', ax=ax)
-    plt.savefig(f'figures/boxplot_bmi_{pathology_col}_unique.png')
+    sns.boxplot(data=unique_bmi_pathology, x=column, y='bmi_lv', ax=ax)
+    plt.savefig(f'figures/boxplot_bmi_{column}_unique.png')
     return unique_bmi_pathology.dropna()
 
 AD427_metadata = get_AD427_metadata(AD427_META_PATH)
@@ -121,6 +125,9 @@ AD427 = adata[adata.obs['dataset'] == 'AD427']
 ADMR = adata[adata.obs['dataset'] == 'ADMR']
 
 pathology_cols = ['apoe_genotype', 'cogdx', 'age_death', 'educ', 'msex', 'race', 'braaksc', 'gpath', 'pmi', 'amyloid', 'plaq_d', 'plaq_n', 'nft', 'tangles', 'arteriol_scler', 'ADdiag3types', 'ADdiag2types']
+for col in pathology_cols:
+    plot_bmi_pathology(adata, col)
+
 # all data
 fig, axs = plt.subplots(1, 2, figsize=(12, 6))
 sns.boxplot(data=AD427.obs, x='ADdiag3types', y='bmi_lv', ax=axs[0])
