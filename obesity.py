@@ -52,34 +52,58 @@ def highest_expr_genes_by_bmi(adata, n_top=20, save=None):
         # sc.pl.umap(group, color='RNA.Subclass.Jun21_2024', save=f'_{DATASET}_RNA.Subclass.Jun21_2024.png')
 
 @log
-def umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024'):
-    fig, axs = plt.subplots(1, 4, figsize=(20, 5), sharex=True, sharey=True)
-    # vmin = min(adata.obs[color])
-    # vmax = max(adata.obs[color]) * 0.99
+def umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024', save=None):
+    fig, axs = plt.subplots(1, 4, sharex=True, sharey=True)
+    vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in bmi_subsets.values()]), 99)
 
     for i, group in enumerate(bmi_groups):
         subset = bmi_subsets[group]
-        sc.pl.umap(subset, color=color, vmax='p99', ax=axs[i], show=False)
+        sc.pl.umap(subset, color=color, vmax=vmax, ax=axs[i], show=False)
         axs[i].set_title(f"{color}, {group}")
 
     plt.tight_layout()
-    plt.savefig(f"figures/bmi/umap_{color}_by_bmi.png")
-    plt.show()
+    if save:
+        plt.savefig(save)
+    else:
+        plt.savefig(f"figures/bmi/umap_{color}_p99_by_bmi.png")
 
-def umap_top_n_genes_by_bmi(bmi_subsets, colors, n_top=5):
-    fig, axs = plt.subplots(n_top, 4, figsize=(20, 5*n_top), sharex=True, sharey=True)
+
+@log
+def umap_top_n_genes_by_bmi(bmi_subsets, colors, n_top=5, save=None):
+    fig, axs = plt.subplots(n_top, len(bmi_groups), sharex=True, sharey=True)
     for row, color in enumerate(colors[:n_top]):
-        # vmin = min(adata.obs[color])
-        # vmax = max(adata.obs[color]) * 0.99
-
+        vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in bmi_subsets.values()]), 99)
         for col, group in enumerate(bmi_groups):
             subset = bmi_subsets[group]
-            sc.pl.umap(subset, color=color, vmax='p99', ax=axs[row, col], show=False)
-            # sc.pl.dotplot(subset, obesity_genes[:n_top], groupby='bmi_groups', standard_scale='var', ax=axs[row, col])
-            axs[row, col].set_title(f"{color}, {group}")
+            try:
+                sc.pl.umap(subset, color=color, vmax=vmax, ax=axs[row, col], show=False)
+                # sc.pl.dotplot(subset, obesity_genes[:n_top], groupby='bmi_groups', standard_scale='var', ax=axs[row, col])
+                axs[row, col].set_title(f"{color}, {group}")
+            except Exception as e:
+                print(f"Error plotting {color} for {group}: {e}")
 
-        plt.tight_layout()
+    plt.tight_layout()
+    if save:
+        plt.savefig(save)
+    else:
         plt.savefig(f"figures/bmi/umap_top_{n_top}_genes_by_bmi.png")
+
+
+@log
+def heatmap_by_bmi(adata, n_genes=5):
+    groups = adata.obs['RNA.Class.Jun21_2024'].unique()
+    fig, axs = plt.subplots(ncols=len(groups), sharex=True, sharey=True)
+    for i, group in enumerate(groups):
+        subset = adata[adata.obs['RNA.Class.Jun21_2024'] == group, :]
+        try:
+            sc.pl.heatmap(adata, n_genes, groupby='RNA.Subclass.Jun21_2024', standard_scale='var', ax=axs[i], save=f'_obesity_DE_{group}_RNA.Subclass.Jun21_2024.png')
+            axs[1, i].set_title(f"{group}")
+        except Exception as e:
+            print(f"An error occured: {e}")
+            sc.pl.heatmap(adata, n_genes=n_genes, groupby='RNA.Subclass.Jun21_2024', standard_scale='var', save=f'_obesity_DE_{group}_RNA.Subclass.Jun21_2024.png')
+
+
+
 
 if __name__ == "__main__":
     # adata_bmi = adata[adata.obs['bmi_lv'].notna(), :]
@@ -87,14 +111,17 @@ if __name__ == "__main__":
     # sc.pl.dotplot(adata, anti_obesity_genes, groupby='bmi_groups', standard_scale='var', save=f'{DATASET}_anti_obesity_genes_bmi_groups.png')
     # sc.pl.dotplot(adata, obesity_genes, groupby='RNA.Class.Jun21_2024', standard_scale='var', save=f'{DATASET}_obesity_genes_RNA.Class.Jun21_2024.png')
 
-    # sc.pl.rank_genes_groups_heatmap(adata_bmi, n_genes=5, groupby='RNA.Class.Jun21_2024', standard_scale='var', save='_obesity_DE_RNA.Class.Jun21_2024.png')
-    # sc.pl.rank_genes_groups_heatmap(adata_bmi, n_genes=5, groupby='bmi_groups', standard_scale='var', save='_obesity_DE_bmi_groups.png')
+    # sc.pl.rank_genes_groups_heatmap(adata, n_genes=5, groupby='RNA.Class.Jun21_2024', standard_scale='var', save='_obesity_DE_RNA.Class.Jun21_2024.png')
+    # sc.pl.rank_genes_groups_heatmap(adata, n_genes=5, groupby='RNA.Subclass.Jun21_2024', standard_scale='var', save='_obesity_DE_RNA.Subclass.Jun21_2024.png')
+    # sc.pl.rank_genes_groups_heatmap(adata, n_genes=5, groupby='RNA.Subtype.Jun21_2024', standard_scale='var', save='_obesity_DE_RNA.Subtype.Jun21_2024.png')
+    # sc.pl.rank_genes_groups_heatmap(adata, n_genes=5, groupby='bmi_groups', standard_scale='var', save='_obesity_DE_bmi_groups.png')
 
     for gene in obesity_genes:
         umap_by_bmi(bmi_subsets, color=gene)
-    # gene = obesity_genes[sys.argv[1]]
-    # print(f"Plotting UMAP for gene {gene}", flush=True)
-    # umap_by_bmi(bmi_subsets, color=gene)
-    # umap_top_n_genes_by_bmi(bmi_subsets, colors=obesity_genes, n_top=5)
 
-    # umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024')
+    # umap_top_n_genes_by_bmi(bmi_subsets, colors=obesity_genes, n_top=5)
+    # umap_top_n_genes_by_bmi(bmi_subsets, colors=anti_obesity_genes, n_top=5, save=f"figures/bmi/umap_antiobesity_genes_by_bmi.png")
+
+    # heatmap_by_bmi(adata, n_genes=5)
+
+    pass
