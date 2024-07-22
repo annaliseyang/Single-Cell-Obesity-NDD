@@ -17,6 +17,8 @@ bmi_groups = ['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
 bmi_subsets = {group: adata[adata.obs['bmi_groups'] == group] for group in bmi_groups}
 AD_groups = ['earlyAD', 'lateAD', 'nonAD']
 AD_subsets = {state: adata[adata.obs['ADdiag3types'].isin([state]) | adata.obs['Pathology'].isin([state])] for state in AD_groups}
+celltypes = ['Exc', 'Inh', 'Oli', 'Ast', 'Mic_Immune', 'OPC', 'Vasc_Epithelia']
+celltype_subsets = {celltype: adata[adata.obs['RNA.Class.Jun21_2024'] == celltype] for celltype in celltypes}
 
 def print_cell_counts_and_percentages(adata):
     for group in bmi_groups:
@@ -88,15 +90,14 @@ def umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024', save=None):
 
 
 def umap_top_n_genes_by_groups(subsets, colors, n_top=5, groupby:str=None, save=None):
-    side_length = 4
-    fig, axs = plt.subplots(n_top, len(subsets), figsize=(len(subsets) * side_length, side_length*n_top), sharex=True, sharey=True)
+    width, height = 4, 3.5
+    fig, axs = plt.subplots(n_top, len(subsets), figsize=(len(subsets) * width, n_top * height), sharex=True, sharey=True)
     for row, color in enumerate(colors[:n_top]):
         vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in subsets.values()]), 99)
         for col, group in enumerate(subsets.keys()):
-            subset = bmi_subsets[group]
+            subset = subsets[group]
             try:
                 sc.pl.umap(subset, color=color, vmax=vmax, ax=axs[row, col], show=False)
-                # sc.pl.dotplot(subset, obesity_genes[:n_top], groupby='bmi_groups', standard_scale='var', ax=axs[row, col])
                 axs[row, col].set_title(f"{color}, {group}")
             except Exception as e:
                 print(f"Error plotting {color} for {group}: {e}")
@@ -109,24 +110,7 @@ def umap_top_n_genes_by_groups(subsets, colors, n_top=5, groupby:str=None, save=
 
 @log
 def umap_top_n_genes_by_bmi(bmi_subsets, colors, n_top=5, save=None):
-    fig, axs = plt.subplots(n_top, len(bmi_groups), figsize=(20, 5*n_top), sharex=True, sharey=True)
-    for row, color in enumerate(colors[:n_top]):
-        vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in bmi_subsets.values()]), 99)
-        for col, group in enumerate(bmi_groups):
-            subset = bmi_subsets[group]
-            try:
-                sc.pl.umap(subset, color=color, vmax=vmax, ax=axs[row, col], show=False)
-                # sc.pl.dotplot(subset, obesity_genes[:n_top], groupby='bmi_groups', standard_scale='var', ax=axs[row, col])
-                axs[row, col].set_title(f"{color}, {group}")
-            except Exception as e:
-                print(f"Error plotting {color} for {group}: {e}")
-
-    plt.tight_layout()
-    if save:
-        plt.savefig(save)
-    else:
-        plt.savefig(f"figures/bmi/umap_top_{n_top}_genes_by_bmi.png")
-
+    umap_top_n_genes_by_groups(bmi_subsets, colors, n_top=n_top, groupby='bmi')
 
 @log
 def heatmap_by_bmi(adata, n_genes=5):
@@ -170,8 +154,14 @@ if __name__ == "__main__":
 
     # umap_top_n_genes_by_bmi(bmi_subsets, colors=obesity_genes, n_top=10)
     # umap_top_n_genes_by_bmi(bmi_subsets, colors=anti_obesity_genes, n_top=5, save=f"figures/bmi/umap_antiobesity_genes_by_bmi.png")
-    # umap_top_n_genes_by_groups(AD_subsets, colors=early_AD_genes, groupby='AD', n_top=5)
-    umap_top_n_genes_by_groups(AD_subsets, colors=late_AD_genes, groupby='AD', n_top=5)
+    # umap_top_n_genes_by_groups(AD_subsets, colors=early_AD_genes, groupby='AD', n_top=5, save=f"figures/AD/umap_early_AD_genes_by_AD_states.png")
+    # umap_top_n_genes_by_groups(AD_subsets, colors=late_AD_genes, groupby='AD', n_top=5, save=f"figures/AD/umap_late_AD_genes_by_AD_states.png")
+
+    for type, subset in celltype_subsets.items():
+        # umap_by_groups(subset, color=early_AD_genes, groupby='celltype', save=f'figures/celltypes/{type}_early_AD_genes.png')
+        # umap_by_groups(subset, color=late_AD_genes, groupby='celltype', save=f'figures/celltypes/{type}_late_AD_genes.png')
+        umap_by_groups(subset, color=obesity_genes, groupby='celltype', save=f'figures/celltypes/{type}_obesity_genes.png')
+
     # heatmap_by_bmi(adata, n_genes=5)
 
     pass
