@@ -117,6 +117,15 @@ if __name__ == "__main__":
     integrate_metadata(adata, AD427_metadata, ADMR_metadata)
     print("Metadata integrated!", flush=True)
     print(adata, flush=True)
+
+    # merge ADdiag3types and Pathology into a single column AD_states
+    AD_states = []
+    for i in range(len(adata.obs['ADdiag3types'])):
+        if adata.obs['ADdiag3types'][i] is not None and pd.notna(adata.obs['ADdiag3types'][i]):
+            AD_states.append(adata.obs['ADdiag3types'][i])
+        else:
+            AD_states.append(adata.obs['Pathology'][i])
+
     adata.write('/home/anna_y/data/write/AD427_ADMR_meta_Jul19_2024.h5ad')
 
 # dataset = ['AD427' if str(int(projid)) in AD427_metadata else 'ADMR' for projid in adata.obs['projid']]
