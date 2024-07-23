@@ -1,5 +1,5 @@
 from plot import *
-from deg import get_top_n_genes
+from deg import get_top_n_genes, rank_genes_groups
 
 # if __name__ == "__main__":
 # adata = load_data(f'/home/anna_y/data/write/processed_{DATASET}_Jun17_2024.h5ad')
@@ -18,7 +18,7 @@ bmi_subsets = {group: adata[adata.obs['bmi_groups'] == group] for group in bmi_g
 AD_groups = ['earlyAD', 'lateAD', 'nonAD']
 AD_subsets = {state: adata[adata.obs['ADdiag3types'].isin([state]) | adata.obs['Pathology'].isin([state])] for state in AD_groups}
 celltypes = ['Exc', 'Inh', 'Oli', 'Ast', 'Mic_Immune', 'OPC', 'Vasc_Epithelia']
-celltype_subsets = {celltype: adata[adata.obs['RNA.Class.Jun21_2024'] == celltype] for celltype in celltypes}
+celltype_subsets = {celltype: adata[adata.obs['RNA.Class.Jun21_2024'] == celltype, :] for celltype in celltypes}
 
 def print_cell_counts_and_percentages(adata):
     for group in bmi_groups:
@@ -88,8 +88,8 @@ def umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024', save=None):
     else:
         plt.savefig(f"figures/bmi/umap_{color}_p99_by_bmi.png")
 
-
-def umap_top_n_genes_by_groups(subsets, colors, n_top=5, groupby:str=None, save=None):
+@log
+def umap_top_n_genes_by_groups(subsets, colors: list, n_top=5, groupby:str=None, save=None):
     width, height = 4, 3.5
     fig, axs = plt.subplots(n_top, len(subsets), figsize=(len(subsets) * width, n_top * height), sharex=True, sharey=True)
     for row, color in enumerate(colors[:n_top]):
@@ -110,7 +110,7 @@ def umap_top_n_genes_by_groups(subsets, colors, n_top=5, groupby:str=None, save=
 
 @log
 def umap_top_n_genes_by_bmi(bmi_subsets, colors, n_top=5, save=None):
-    umap_top_n_genes_by_groups(bmi_subsets, colors, n_top=n_top, groupby='bmi')
+    umap_top_n_genes_by_groups(bmi_subsets, colors, n_top=n_top, groupby='bmi', save=save)
 
 @log
 def heatmap_by_bmi(adata, n_genes=5):
@@ -126,18 +126,7 @@ def heatmap_by_bmi(adata, n_genes=5):
             sc.pl.rank_genes_groups_heatmap(subset, n_genes=n_genes, groupby='RNA.Subclass.Jun21_2024', standard_scale='var', save=f'_obesity_DE_{group}_RNA.Subclass.Jun21_2024.png')
 
 
-def deg_by_AD_state(subsets, groupby='AD_states', reference='nonAD'):
-    # Perform DEG analysis using the rank_genes_groups function
-    for group, subset in subsets.items():
-        sc.tl.rank_genes_groups(subset, groupby=groupby, reference=reference)
-    # Access the DEG results for each AD group
-    for group, subset in subsets.items():
-        print(f"DEG results for {group}:")
-        print(subset.uns['rank_genes_groups'])
-
-
 if __name__ == "__main__":
-    # adata_bmi = adata[adata.obs['bmi_lv'].notna(), :]
     # sc.pl.dotplot(adata, obesity_genes, groupby='bmi_groups', standard_scale='var', save=f'{DATASET}_obesity_genes_bmi_groups.png')
     # sc.pl.dotplot(adata, anti_obesity_genes, groupby='bmi_groups', standard_scale='var', save=f'{DATASET}_anti_obesity_genes_bmi_groups.png')
     # sc.pl.dotplot(adata, obesity_genes, groupby='RNA.Class.Jun21_2024', standard_scale='var', save=f'{DATASET}_obesity_genes_RNA.Class.Jun21_2024.png')
@@ -158,9 +147,44 @@ if __name__ == "__main__":
     # umap_top_n_genes_by_groups(AD_subsets, colors=late_AD_genes, groupby='AD', n_top=5, save=f"figures/AD/umap_late_AD_genes_by_AD_states.png")
 
     for type, subset in celltype_subsets.items():
-        # umap_by_groups(subset, color=early_AD_genes, groupby='celltype', save=f'figures/celltypes/{type}_early_AD_genes.png')
-        # umap_by_groups(subset, color=late_AD_genes, groupby='celltype', save=f'figures/celltypes/{type}_late_AD_genes.png')
-        umap_by_groups(subset, color=obesity_genes, groupby='celltype', save=f'figures/celltypes/{type}_obesity_genes.png')
+        # make subsets for each cell type
+        AD_subsets = {group: subset[subset.obs['AD_states'] == group, :] for group in AD_groups}
+        bmi_subsets = {group: subset[subset.obs['bmi_groups'] == group, :] for group in bmi_groups}
+
+        # plot umaps for the top 20 cell type specific AD and bmi markers
+        # for group in ['earlyAD', 'lateAD']:
+        #     markers = get_top_n_genes('earlyAD', f'rank_genes_groups_{type}_by_AD_states.csv', n_genes=20)
+        #     print(f"Top 20 early AD genes for {type}: {markers}", flush=True)
+        #     umap_top_n_genes_by_groups(AD_subsets, colors=markers, n_top=5, save=f'figures/celltypes/{type}_early_AD_genes_celltype_specific.png')
+
+        print(f"Computing DEG results for {type}, {group}...", flush=True)
+        groupby = 'bmi_groups'
+        # sc.tl.rank_genes_groups(subset, groupby=groupby, method='wilcoxon', key_added=f'rank_genes_groups_{type}_by_{groupby}')
+        rank_genes_groups(subset, groupby=groupby, type=type)
+
+        for group in bmi_groups:
+            # try:
+            #     markers = get_top_n_genes(group, f'rank_genes_groups_{type}_by_bmi_groups.csv', n_genes=20)
+            #     print(f"Top 20 bmi genes for {type}: {markers}", flush=True)
+            #     umap_top_n_genes_by_groups(bmi_subsets, colors=markers, n_top=5, save=f'figures/celltypes/{type}_bmi_genes_celltype_specific.png')
+            # except Exception as e:
+
+            markers = get_top_n_genes(group, f'rank_genes_groups_{type}_by_{groupby}.csv', n_genes=20)
+            umap_top_n_genes_by_groups(bmi_subsets, colors=markers, n_top=5, save=f'figures/celltypes/{type}_{group}_genes_celltype_specific.png')
+
+
+
+
+        # # umap_by_groups(AD_subsets, 'SLC38A2', groupby='celltype', save=f'figures/celltypes/{type}_early_AD_SLC38A2.png')
+        # for gene in early_AD_genes[:5]:
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_early_AD_{gene}.png')
+        # for gene in late_AD_genes[:5]:
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_late_AD_{gene}.png')
+        # for gene in obesity_genes[:5]:
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_obesity_{gene}.png')
+        # for gene in anti_obesity_genes[:5]:
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_anti_obesity_{gene}.png')
+
 
     # heatmap_by_bmi(adata, n_genes=5)
 

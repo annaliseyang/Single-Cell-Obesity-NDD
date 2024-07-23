@@ -114,9 +114,9 @@ if __name__ == "__main__":
     # print('Number of ADMR keys:', len(ADMR_keys))
     # print('Common keys:', common_keys, 'Number:', len(common_keys))
 
-    integrate_metadata(adata, AD427_metadata, ADMR_metadata)
-    print("Metadata integrated!", flush=True)
-    print(adata, flush=True)
+    # integrate_metadata(adata, AD427_metadata, ADMR_metadata)
+    # print("Metadata integrated!", flush=True)
+    # print(adata, flush=True)
 
     # merge ADdiag3types and Pathology into a single column AD_states
     AD_states = []
@@ -125,37 +125,38 @@ if __name__ == "__main__":
             AD_states.append(adata.obs['ADdiag3types'][i])
         else:
             AD_states.append(adata.obs['Pathology'][i])
+    adata.obs['AD_states'] = AD_states
 
-    adata.write('/home/anna_y/data/write/AD427_ADMR_meta_Jul19_2024.h5ad')
+    adata.write('/home/anna_y/data/write/AD427_ADMR_meta_Jul22_2024.h5ad')
 
-# dataset = ['AD427' if str(int(projid)) in AD427_metadata else 'ADMR' for projid in adata.obs['projid']]
-# adata.obs['dataset'] = ['AD427' if str(int(projid)) in AD427_metadata else 'ADMR' for projid in adata.obs['projid']]
-AD427 = adata[adata.obs['dataset'] == 'AD427']
-ADMR = adata[adata.obs['dataset'] == 'ADMR']
+# # dataset = ['AD427' if str(int(projid)) in AD427_metadata else 'ADMR' for projid in adata.obs['projid']]
+# # adata.obs['dataset'] = ['AD427' if str(int(projid)) in AD427_metadata else 'ADMR' for projid in adata.obs['projid']]
+# AD427 = adata[adata.obs['dataset'] == 'AD427']
+# ADMR = adata[adata.obs['dataset'] == 'ADMR']
 
-pathology_cols = ['apoe_genotype', 'cogdx', 'age_death', 'educ', 'msex', 'race', 'braaksc', 'gpath', 'pmi', 'amyloid', 'plaq_d', 'plaq_n', 'nft', 'tangles', 'arteriol_scler', 'ADdiag3types', 'ADdiag2types']
-for col in pathology_cols:
-    plot_bmi_pathology(adata, col)
+# pathology_cols = ['apoe_genotype', 'cogdx', 'age_death', 'educ', 'msex', 'race', 'braaksc', 'gpath', 'pmi', 'amyloid', 'plaq_d', 'plaq_n', 'nft', 'tangles', 'arteriol_scler', 'ADdiag3types', 'ADdiag2types']
+# for col in pathology_cols:
+#     plot_bmi_pathology(adata, col)
 
-# all data
-fig, axs = plt.subplots(1, 2, figsize=(12, 6))
-sns.boxplot(data=AD427.obs, x='ADdiag3types', y='bmi_lv', ax=axs[0])
-sns.boxplot(data=AD427.obs, x='ADdiag2types', y='bmi_lv', ax=axs[1])
-plt.savefig('figures/boxplot_bmi_AD.png')
+# # all data
+# fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+# sns.boxplot(data=AD427.obs, x='ADdiag3types', y='bmi_lv', ax=axs[0])
+# sns.boxplot(data=AD427.obs, x='ADdiag2types', y='bmi_lv', ax=axs[1])
+# plt.savefig('figures/boxplot_bmi_AD.png')
 
-plt.figure(figsize=(8, 6))
-# sns.boxplot(data=AD427.obs, x='ADdiag3types', y='bmi_lv')
-sns.boxplot(data=AD427.obs, x='ADdiag2types', y='bmi_lv')
-plt.savefig('figures/boxplot_bmi_ADdiag2types.png')
+# plt.figure(figsize=(8, 6))
+# # sns.boxplot(data=AD427.obs, x='ADdiag3types', y='bmi_lv')
+# sns.boxplot(data=AD427.obs, x='ADdiag2types', y='bmi_lv')
+# plt.savefig('figures/boxplot_bmi_ADdiag2types.png')
 
-bmi_lv = [info['bmi_lv'] for info in AD427_metadata.values()]
-ADdiag3types = [info['ADdiag3types'] for info in AD427_metadata.values()]
-df = pd.DataFrame({'bmi_lv': bmi_lv, 'ADdiag3types': ADdiag3types})
-plt.figure(figsize=(8, 6))
-sns.boxplot(data=df, x='ADdiag3types', y='bmi_lv')
-plt.savefig('figures/boxplot_bmi_lv_ADdiag3types.png')
+# bmi_lv = [info['bmi_lv'] for info in AD427_metadata.values()]
+# ADdiag3types = [info['ADdiag3types'] for info in AD427_metadata.values()]
+# df = pd.DataFrame({'bmi_lv': bmi_lv, 'ADdiag3types': ADdiag3types})
+# plt.figure(figsize=(8, 6))
+# sns.boxplot(data=df, x='ADdiag3types', y='bmi_lv')
+# plt.savefig('figures/boxplot_bmi_lv_ADdiag3types.png')
 
-plt.figure(figsize=(8, 6))
-sns.boxplot(data=ADMR.obs, x='Pathology', y='bmi_lv')
-plt.show()
-plt.savefig('figures/ADMR_bmi_boxplot.png')
+# plt.figure(figsize=(8, 6))
+# sns.boxplot(data=ADMR.obs, x='Pathology', y='bmi_lv')
+# plt.show()
+# plt.savefig('figures/ADMR_bmi_boxplot.png')
