@@ -3,7 +3,10 @@ out/
 err/
 data/
 HumanBrainObesity/
+.RData
+.Rhistory
 
 *.txt
 *test*
 *.sh
+*.yml

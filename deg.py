@@ -23,7 +23,7 @@ def rank_genes_groups(adata, groupby='AD_states', type=None):
     # save the ranked genes and parameters to CSV files and JSON file respectively
     result.to_csv(f"rank_genes_groups_{type}_by_{groupby}.csv", index=False)
     json.dump(parameters, open(f"rank_genes_groups_{type}_by_{groupby}_parameters.json", 'w'))
-    sc.pl.rank_genes_groups_heatmap(adata, n_genes=5, groupby=groupby, standard_scale='var', save=f'_{type}_{groupby}.png')
+    # sc.pl.rank_genes_groups_heatmap(adata, n_genes=5, groupby=groupby, standard_scale='var', save=f'_{type}_{groupby}.png')
 
     return result
 

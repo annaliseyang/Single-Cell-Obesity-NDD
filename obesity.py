@@ -157,8 +157,8 @@ if __name__ == "__main__":
         #     print(f"Top 20 early AD genes for {type}: {markers}", flush=True)
         #     umap_top_n_genes_by_groups(AD_subsets, colors=markers, n_top=5, save=f'figures/celltypes/{type}_early_AD_genes_celltype_specific.png')
 
-        print(f"Computing DEG results for {type}, {group}...", flush=True)
         groupby = 'bmi_groups'
+        print(f"Computing DEG results for {type} by {groupby}...", flush=True)
         # sc.tl.rank_genes_groups(subset, groupby=groupby, method='wilcoxon', key_added=f'rank_genes_groups_{type}_by_{groupby}')
         rank_genes_groups(subset, groupby=groupby, type=type)
 

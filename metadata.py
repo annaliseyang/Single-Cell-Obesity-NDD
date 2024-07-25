@@ -99,16 +99,6 @@ AD427_keys = list(AD427_metadata.values())[0].keys()
 ADMR_keys = list(ADMR_metadata.values())[0].keys()
 
 if __name__ == "__main__":
-    # AD427_keys = list(AD427_metadata.values())[0].keys()
-    # print(AD427_keys)
-    # assert len(list(AD427_metadata.keys())) == 427
-    # assert len(set(list(AD427_metadata.keys()))) == 427, "Duplicate sequences found in metadata"
-
-    # ADMR_keys = list(ADMR_metadata.values())[0].keys()
-    # # print(ADMR_metadata.keys())
-    # print(list(ADMR_metadata.values())[0])
-    # # print(len(ADMR_metadata))
-
     # common_keys = set(AD427_keys).intersection(set(ADMR_keys))
     # print('Number of AD427 keys:', len(AD427_keys))
     # print('Number of ADMR keys:', len(ADMR_keys))
@@ -128,6 +118,8 @@ if __name__ == "__main__":
     adata.obs['AD_states'] = AD_states
 
     adata.write('/home/anna_y/data/write/AD427_ADMR_meta_Jul22_2024.h5ad')
+
+    pass
 
 # # dataset = ['AD427' if str(int(projid)) in AD427_metadata else 'ADMR' for projid in adata.obs['projid']]
 # # adata.obs['dataset'] = ['AD427' if str(int(projid)) in AD427_metadata else 'ADMR' for projid in adata.obs['projid']]
