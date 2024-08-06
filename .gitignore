@@ -10,3 +10,4 @@ HumanBrainObesity/
 *test*
 *.sh
 *.yml
+.Rproj.user
