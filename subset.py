@@ -1,25 +1,43 @@
 import scanpy as sc
-import pandas as pd
-import numpy as np
+import os
 
-in_path = "/home/anna_y/data/write/"
-out_path = "/home/anna_y/data/write/celltypes/"
-filename = "AD427_ADMR_meta_Jul22_2024.h5ad"
+in_dir = "/home/anna_y/data/write/"
+filename = "AD427_ADMR_Aug6_2024.h5ad"
 
-# Load the h5ad file
-adata = sc.read_h5ad(in_path + filename)
+def subset_and_save(adata, condition, value, out_dir, file_suffix):
+    print(f"Subsetting {condition} == {value}...", flush=True)
+    print(f"Output directory: {out_dir}", flush=True)
 
-adata.obs['Class'] = adata.obs['RNA.Class.Jun21_2024']
-adata.obs['Subclass'] = adata.obs['RNA.Subclass.Jun21_2024']
-adata.obs['Subtype'] = adata.obs['RNA.Subtype.Jun21_2024']
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    print(f"Processing {value}...", flush=True)
+    subset = adata[adata.obs[condition] == value, :].copy()
+    print(f"Number of cells: {subset.shape[0]}", flush=True)
+    subset.write(os.path.join(out_dir, f"{value}_{file_suffix}.h5ad"))
 
-adata.write(in_path + 'AD427_ADMR_Aug6_2024.h5ad')
+def subset_celltypes(adata, celltypes, out_dir):
+    for celltype in celltypes:
+        subset_and_save(adata, 'Class', celltype, out_dir, "Aug6_2024")
 
-cell_types = adata.obs['Class'].unique()
-print("Cell types:", cell_types, flush=True)
+def subset_bmi_groups(adata, bmi_groups, out_dir):
+    for group in bmi_groups:
+        subset_and_save(adata, 'bmi_groups', group, out_dir, "Aug6_2024")
 
-for cell_type in cell_types:
-    print(f"Processing {cell_type}...")
-    subset = adata[adata.obs['Class'] == cell_type]
-    print(f"Number of cells: {len(subset)}")
-    subset.write(out_path + f"{cell_type}_Aug6_2024.h5ad")
+def subset_ad_states(adata, ad_states, out_dir):
+    for state in ad_states:
+        subset_and_save(adata, 'AD_states', state, out_dir, "Aug6_2024")
+
+if __name__ == "__main__":
+    # Load the h5ad file
+    adata = sc.read_h5ad(in_dir + filename)
+    print(adata, flush=True)
+
+    # celltypes = adata.obs['Class'].unique()
+    # subset_celltypes(adata, celltypes, out_dir=os.path.join(in_dir, "celltypes"))
+
+    # bmi_groups = ['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
+    bmi_groups = ['bmi_25-30', 'bmi_30+']
+    subset_bmi_groups(adata, bmi_groups, out_dir=os.path.join(in_dir, "bmi_groups"))
+
+    # ad_states = ['earlyAD', 'lateAD', 'nonAD']
+    # subset_ad_states(adata, ad_states, out_dir=os.path.join(in_dir, "ad_states"))

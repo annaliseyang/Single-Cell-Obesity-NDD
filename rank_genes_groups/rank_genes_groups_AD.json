@@ -1,0 +1,10 @@
+{
+    "params": {
+        "groupby": "AD_states",
+        "reference": "nonAD",
+        "method": "t-test",
+        "use_raw": false,
+        "layer": null,
+        "corr_method": "benjamini-hochberg"
+    },
+    "names": 
