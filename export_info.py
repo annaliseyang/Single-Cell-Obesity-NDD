@@ -21,7 +21,8 @@ if not os.path.exists(out_dir):
 print(f"Output directory: {out_dir}", flush=True)
 
 # Export the expression matrix and metadata to CSV
-adata.to_df().to_csv(out_dir + f'{celltype}_expression_matrix.csv')
+# adata.to_df().to_csv(out_dir + f'{celltype}_expression_matrix.csv')
+adata.raw.to_df().to_csv(out_dir + f'{celltype}_raw_counts.csv')
 adata.obs.to_csv(out_dir + f'{celltype}_obs.csv')
 adata.var.to_csv(out_dir + f'{celltype}_var.csv')
 

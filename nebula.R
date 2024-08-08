@@ -2,26 +2,16 @@ library(nebula)
 library(Seurat)
 library(SeuratDisk)
 
-indir <- "/home/anna_y/data/write/"
-filename <- "AD427_ADMR_meta_Jul22_2024.h5seurat"
+indir <- "/home/anna_y/data/test/"
+filename <- "tiny_AD427_ADMR_Aug6_2024.rds"
 argv <- commandArgs(T)
-name <- "test"
+name <- "tiny_AD427_ADMR"
 sample.col <- "Sample"
-out_dir <- "/home/anna_y/data/write/deg/"
+out_dir <- "/home/anna_y/data/test/deg/"
 
 print("Loading data")
-
-# Load Seurat object from h5seurat file
-Seurat_Obj <- tryCatch({
-  LoadH5Seurat(paste0(indir, filename))
-}, error = function(e) {
-  cat("Error loading h5seurat file: ", e$message, "\n")
-  NULL
-})
-
-if (is.null(Seurat_Obj)) {
-  stop("Failed to load Seurat object. Exiting...")
-}
+seurat_obj <- readRDS(paste0(indir, filename))
+print(seurat_obj)
 
 deg.nebula <- function(Seurat_Obj, pathology, sample.col,
                        offset="total_counts",
@@ -83,4 +73,4 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
 
 }
 
-deg.nebula(Seurat_Obj, "gpath", sample.col)
+deg.nebula(seurat_obj, "gpath", sample.col)

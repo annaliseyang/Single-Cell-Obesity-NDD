@@ -1,7 +1,7 @@
 library(SeuratDisk)
 
-path = "/home/anna_y/data/write/"
-name = "AD427_ADMR_Aug6_2024"
+# path = "/home/anna_y/data/write/"
+# name = "AD427_ADMR_Aug6_2024"
 # filename = "AD427_ADMR_Aug6_2024.h5ad"
 
 argv <- commandArgs(T)
