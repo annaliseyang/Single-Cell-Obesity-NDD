@@ -4,7 +4,7 @@ import os
 in_dir = "/home/anna_y/data/write/"
 filename = "AD427_ADMR_Aug6_2024.h5ad"
 
-def subset_and_save(adata, condition, value, out_dir, file_suffix):
+def subset_and_save(adata, condition, value, out_dir, file_suffix=""):
     print(f"Subsetting {condition} == {value}...", flush=True)
     print(f"Output directory: {out_dir}", flush=True)
 
@@ -36,8 +36,9 @@ if __name__ == "__main__":
     # subset_celltypes(adata, celltypes, out_dir=os.path.join(in_dir, "celltypes"))
 
     # bmi_groups = ['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
-    bmi_groups = ['bmi_25-30', 'bmi_30+']
-    subset_bmi_groups(adata, bmi_groups, out_dir=os.path.join(in_dir, "bmi_groups"))
+    # bmi_groups = ['bmi_25-30', 'bmi_30+']
+    # subset_bmi_groups(adata, bmi_groups, out_dir=os.path.join(in_dir, "bmi_groups"))
+    subset_and_save(adata, 'bmi_groups', 'bmi_20-25', out_dir=os.path.join(in_dir, "bmi_groups"), file_suffix="Aug6_2024")
 
     # ad_states = ['earlyAD', 'lateAD', 'nonAD']
     # subset_ad_states(adata, ad_states, out_dir=os.path.join(in_dir, "ad_states"))

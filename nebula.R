@@ -2,16 +2,20 @@ library(nebula)
 library(Seurat)
 library(SeuratDisk)
 
-indir <- "/home/anna_y/data/test/"
-filename <- "tiny_AD427_ADMR_Aug6_2024.rds"
+indir <- "/home/anna_y/data/test/tiny_AD427_ADMR/"
+filename <- "tiny_AD427_ADMR.rds"
 argv <- commandArgs(T)
 name <- "tiny_AD427_ADMR"
 sample.col <- "Sample"
 out_dir <- "/home/anna_y/data/test/deg/"
 
-print("Loading data")
+print("Loading data...")
+print(paste0("input directory:", indir, filename))
+print(paste0("output directory:", out_dir))
+
 seurat_obj <- readRDS(paste0(indir, filename))
 print(seurat_obj)
+head(seurat_obj@meta.data)
 
 deg.nebula <- function(Seurat_Obj, pathology, sample.col,
                        offset="total_counts",
@@ -73,4 +77,6 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
 
 }
 
-deg.nebula(seurat_obj, "gpath", sample.col)
+var <- "nCount_RNA"
+deg.nebula(seurat_obj, var, sample.col)
+print(paste("Running deg.nebula on", var))

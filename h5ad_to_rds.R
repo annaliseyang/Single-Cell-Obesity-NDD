@@ -7,8 +7,6 @@ library(SeuratDisk)
 in_path = "/home/anna_y/data/test/tiny_AD427_ADMR_Aug6_2024.h5ad"
 out_path = sub(".h5ad", ".rds", in_path) # output file will be saved in the same directory as the input
 # filename <- basename(filepath)
-
-# Load the Python environment
 use_python("~/.conda/envs/sc2024/bin/python")
 
 # Load h5ad data
