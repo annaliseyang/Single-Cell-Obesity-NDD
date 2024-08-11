@@ -1,6 +1,6 @@
 __pycache__/
-out/
-err/
+*.out
+*.err
 log/
 data/
 HumanBrainObesity/
@@ -9,6 +9,6 @@ HumanBrainObesity/
 scRNA.Rproj
 *.txt
 *test*
-*.sh
+.DS_Store
 *.yml
 .Rproj.user
