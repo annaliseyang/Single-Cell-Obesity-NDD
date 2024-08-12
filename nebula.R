@@ -2,16 +2,16 @@ library(nebula)
 library(Seurat)
 library(SeuratDisk)
 
-# indir <- "~/data/test/tiny_AD427_ADMR/"
-# filename <- "tiny_AD427_ADMR.rds"
+# var <- "bmi_lv"
+var <- "AD_states"
 indir = commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
+
 filename <- list.files(indir, pattern=".rds")[1]
 print(paste("Filename:", filename))
-
 name <- sub(".rds", "", filename)
 sample.col <- "Sample"
 # out_dir <- "~/results/deg/"
-out_dir <- sub("data/write", "results/deg", indir)
+out_dir <- sub("data/write", paste0("results/", "deg_", var), indir)
 
 # create the out_dir if it doesn't exist
 dir.create(out_dir, recursive = TRUE)
@@ -22,7 +22,7 @@ print(paste0("output directory: ", out_dir))
 
 seurat_obj <- readRDS(file.path(indir, filename))
 print(seurat_obj)
-head(seurat_obj@meta.data)
+# head(seurat_obj@meta.data)
 print("Metadata dimensions:")
 print(dim(seurat_obj@meta.data))
 
@@ -31,19 +31,24 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
                        ncore = 12,
                        cpc = 0, reml = 1) {
 
-  covariates = c("msex", "pmi", "total_counts", "nFeature_RNA")
+  covariates = c("msex", "pmi", "total_counts", "nFeature_RNA", "age_death")
   covariates = covariates[covariates %in% colnames(Seurat_Obj@meta.data)]
+  Seurat_Obj@meta.data$pathology <- as.factor(Seurat_Obj@meta.data$pathology) # convert to factor
+  head(Seurat_Obj@meta.data$pathology)
+
   print("Covariates:")
   print(covariates)
 
   # filtered_meta_data <- Seurat_Obj@meta.data[!is.na(Seurat_Obj@meta.data[[pathology]]), ]
   # Seurat_Obj <- subset(Seurat_Obj, cells = rownames(filtered_meta_data))
   metadata <- Seurat_Obj@meta.data
+
+  print("Filtering cells...")
   filtered_cells <- rownames(metadata[!is.na(metadata$bmi_lv), ])
   print(paste0("Number of cells after filtering by ", pathology, ": ", length(filtered_cells)))
   Seurat_Obj <- subset(Seurat_Obj, cells = filtered_cells)
-
   print(Seurat_Obj)
+  metadata <- metadata[rownames(Seurat_Obj), ]
 
   # Convert Seurat object to Nebula data format
   seuratdata <- tryCatch({
@@ -70,6 +75,7 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
 
   # Convert predictor matrix to dataframe
   df <- as.data.frame(data_g$pred)
+  # df <- as.data.frame(metadata)
   colnames(df) <- c(covariates, pathology)
 
   print("Creating formula...")
@@ -99,6 +105,11 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
   print(nrow(design))
   print("Number of columns in count matrix after subsetting:")
   print(ncol(data_g$count))
+
+  if (nrow(design) == 0 || ncol(data_g$count) == 0) {
+    stop("Error: Design matrix or count matrix is empty after filtering. Please check your data.")
+  }
+
 
   # Run nebula
   neb <- tryCatch({
@@ -142,7 +153,5 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
 }
 
 
-
-var <- "bmi_lv"
 print(paste("Running deg.nebula on", var))
 deg.nebula(seurat_obj, var, sample.col)

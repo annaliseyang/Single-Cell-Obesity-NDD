@@ -8,11 +8,11 @@ echo Submitting $file...
 echo Arguments: $args
 
 if [[ "$file" == *".py" ]]; then
-    sbatch job.sh sc2024 $file $args
+    sbatch --job-name="$file" job.sh sc2024 $file $args
 elif [[ "$file" == *".R" ]]; then
-    sbatch job.sh r_env $file $args
+    sbatch --job-name="$file" job.sh r_env $file $args
 elif [[ "$file" == *".sh" ]]; then
-    sbatch -p kellis -n 4 $file $args
+    sbatch -p kellis -n 4 --job-name="$file" $file $args
 else
     echo "Error submitting job $file"
 fi
