@@ -1,5 +1,6 @@
 library(Seurat)
-
+print("Hello World!!")
+print("How are you Anna!")
 # Define file paths
 # in_path <- "/home/anna_y/data/test/tiny_AD427_ADMR/"
 in_path <- commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
