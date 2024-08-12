@@ -2,7 +2,7 @@ library(Seurat)
 
 # Define file paths
 # in_path <- "/home/anna_y/data/test/tiny_AD427_ADMR/"
-in_path <- commandArgs(T)[1]
+in_path <- commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
 rds_filename <- list.files(in_path, pattern=".rds")[1]
 metadata_filename <- list.files(in_path, pattern="obs.csv")[1]
 

@@ -4,13 +4,17 @@ library(SeuratDisk)
 
 # indir <- "~/data/test/tiny_AD427_ADMR/"
 # filename <- "tiny_AD427_ADMR.rds"
-indir = commandArgs(T)[1]
+indir = commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
 filename <- list.files(indir, pattern=".rds")[1]
 print(paste("Filename:", filename))
 
 name <- sub(".rds", "", filename)
 sample.col <- "Sample"
-out_dir <- "~/results/test/"
+# out_dir <- "~/results/deg/"
+out_dir <- sub("data/write", "results/deg", indir)
+
+# create the out_dir if it doesn't exist
+dir.create(out_dir, recursive = TRUE)
 
 print("Loading data...")
 print(paste0("input directory: ", file.path(indir, filename)))

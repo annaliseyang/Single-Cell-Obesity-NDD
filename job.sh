@@ -3,7 +3,7 @@
 #SBATCH -n 4
 #SBATCH -p kellis
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=500G
+#SBATCH --mem=0
 
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=anna_y@mit.edu

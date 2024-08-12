@@ -8,8 +8,10 @@
 # input_dir="/home/anna_y/data/write/Class/"
 # input_dir="/home/anna_y/data/write/Subclass/"
 # input_dir="/home/anna_y/data/write/Subtype/"
-input_dir="/home/anna_y/data/write/msex/"
+# input_dir="/home/anna_y/data/write/msex/"
 # input_dir="/home/anna_y/data/write/apoe_genotype/"
+
+input_dir=$1
 script=export_info_create_rds.sh
 
 # Loop through each file in the directory

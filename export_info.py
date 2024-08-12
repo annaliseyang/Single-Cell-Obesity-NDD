@@ -39,6 +39,6 @@ for i in range(0, adata.shape[0], batch_size):
 
 print(f"All counts exported to csv!", flush=True)
 # df.to_csv(out_dir + f'{celltype}_expression_matrix.csv')
-df = pd.read_csv(out_dir + f'{celltype}_expression_matrix.csv', header=0)
-print(df.shape, flush=True)
-print("Data exported to CSV", flush=True)
+# df = pd.read_csv(out_dir + f'{celltype}_expression_matrix.csv', header=0)
+# print(df.shape, flush=True)
+# print("Data exported to CSV", flush=True)
