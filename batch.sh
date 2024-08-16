@@ -11,13 +11,16 @@
 # input_dir="/home/anna_y/data/write/msex/"
 # input_dir="/home/anna_y/data/write/apoe_genotype/"
 
-input_dir=$1
-script=export_info_create_rds.sh
+# pattern=$1
+# pattern=/home/anna_y/data/write/*/*_50k.h5ad
+pattern=/home/anna_y/data/write/Subtype/*/
+# script=export_info_create_rds.sh
+script=nebula.R
 
 # Loop through each file in the directory
-for file in "$input_dir"*.h5ad; do
+for file in $pattern; do
   echo ""
-  echo "Running $script on file: $file"
+  echo "Running $script on $file"
   # sbatch $script $file
   bash submit.sh $script $file
   # exit

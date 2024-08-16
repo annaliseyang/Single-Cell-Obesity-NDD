@@ -2,12 +2,21 @@ library(nebula)
 library(Seurat)
 library(SeuratDisk)
 
-# var <- "bmi_lv"
-var <- "AD_states"
+var <- "bmi_lv"
+# var <- "AD_states"
 indir = commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
 
 filename <- list.files(indir, pattern=".rds")[1]
-print(paste("Filename:", filename))
+
+while (is.na(filename) || length(filename) == 0) {
+  print("No .rds file found in the input directory. Checking again in 5 minutes.")
+  Sys.sleep(300) # wait 5 minutes before checking again
+  filename <- list.files(indir, pattern=".rds")[1]
+}
+
+# Proceed with the rest of the code after an .rds file is found
+print(paste("Found .rds file:", filename))
+
 name <- sub(".rds", "", filename)
 sample.col <- "Sample"
 # out_dir <- "~/results/deg/"
@@ -31,9 +40,9 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
                        ncore = 12,
                        cpc = 0, reml = 1) {
 
-  covariates = c("msex", "pmi", "total_counts", "nFeature_RNA", "age_death")
+  covariates = c("msex", "pmi", "total_counts", "nFeature_RNA", "age_death", "gpath")
   covariates = covariates[covariates %in% colnames(Seurat_Obj@meta.data)]
-  Seurat_Obj@meta.data$pathology <- as.factor(Seurat_Obj@meta.data$pathology) # convert to factor
+  # Seurat_Obj@meta.data$pathology <- as.factor(Seurat_Obj@meta.data$pathology) # convert to factor
   head(Seurat_Obj@meta.data$pathology)
 
   print("Covariates:")
