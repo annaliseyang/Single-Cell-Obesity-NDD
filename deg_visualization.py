@@ -14,18 +14,8 @@ def plot_volcano(class_deg_results, log2fc_cutoff=1.0, ax=None):
     ax.set_xlabel('Log2 Fold Change')
     ax.set_ylabel('-Log10 FDR')
 
-def plot_volcano_all_classes(log2fc_cutoff=1.0):
-    in_dir = '/home/anna_y/results/deg_bmi_lv/Class/'
-    # in_paths = os.listdir('/home/anna_y/results/deg_bmi_lv/Class/*/*.Clean.tsv')
-    # print(f'Files found: {in_paths}')
-    classes = os.listdir(in_dir)
-    print(f'Classes found: {classes}')
-
-    nrows = 3
-    ncols = (len(classes) + nrows - 1) // nrows  # This ensures enough columns
-    print(f'Grid layout: {nrows} rows x {ncols} columns')
-
-    fig, axs = plt.subplots(nrows=nrows, ncols=ncols, sharex=True, sharey=True, figsize=(15, 10))
+def plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff=1.0, save=None):
+    fig, axs = plt.subplots(nrows=nrows, ncols=ncols, sharex=True, sharey=True, figsize=(3*ncols, 3*nrows))
     axs = axs.flatten()  # Flatten to make indexing easier
 
     for i, class_name in enumerate(classes):
@@ -43,9 +33,41 @@ def plot_volcano_all_classes(log2fc_cutoff=1.0):
         ax.set_title(class_name)
 
     plt.tight_layout()
-    plt.savefig('figures/deg/volcano_all_classes.png')
+    plt.savefig(save)
     # plt.show()
 
+def plot_volcano_all_classes(log2fc_cutoff=1.0):
+    in_dir = '/home/anna_y/results/deg_bmi_lv/Class/'
+    # in_paths = os.listdir('/home/anna_y/results/deg_bmi_lv/Class/*/*.Clean.tsv')
+    # print(f'Files found: {in_paths}')
+    classes = os.listdir(in_dir)
+    print(f'Classes found: {classes}')
+
+    nrows = 3
+    ncols = (len(classes) + nrows - 1) // nrows  # This ensures enough columns
+    print(f'Grid layout: {nrows} rows x {ncols} columns')
+    plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save='figures/deg/volcano_all_classes.png')
+
+
+def plot_volcano_subclasses(parent_class=None, log2fc_cutoff=1.0):
+    in_dir = '/home/anna_y/results/deg_bmi_lv/Subclass/'
+    # in_paths = os.listdir('/home/anna_y/results/deg_bmi_lv/Subclass/*/*.Clean.tsv')
+    # print(f'Files found: {in_paths}')
+    classes = os.listdir(in_dir)
+    if parent_class:
+        classes = [c for c in classes if parent_class in c]
+    print(f'Classes found: {classes}')
+
+    nrows = 5
+    ncols = len(classes) // nrows + 1
+    print(f'Grid layout: {nrows} rows x {ncols} columns')
+    out_path = f'figures/deg/volcano_{parent_class}_subclasses.png'
+    plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save=out_path)
+    print(f'Volcano plots saved to {out_path}.')
 
 if __name__ == "__main__":
-    plot_volcano_all_classes(log2fc_cutoff=1.0)
+    plot_volcano_all_classes(log2fc_cutoff=0.5)
+    plot_volcano_subclasses(log2fc_cutoff=0.5)
+
+    for parent_class in ['Exc', 'Inh', 'End']:
+        plot_volcano_subclasses(parent_class, log2fc_cutoff=0.5)
