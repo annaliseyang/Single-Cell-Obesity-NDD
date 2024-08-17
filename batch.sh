@@ -13,15 +13,16 @@
 
 # pattern=$1
 # pattern=/home/anna_y/data/write/*/*_50k.h5ad
-pattern=/home/anna_y/data/write/Subtype/*/
+pattern=/home/anna_y/data/write/Class/*/ # for nebula
+# pattern=/home/anna_y/data/write/Class/*/*.rds # for normalize_bmi
 # script=export_info_create_rds.sh
+# script=normalize_bmi.R
 script=nebula.R
 
 # Loop through each file in the directory
 for file in $pattern; do
   echo ""
   echo "Running $script on $file"
-  # sbatch $script $file
   bash submit.sh $script $file
   # exit
 done

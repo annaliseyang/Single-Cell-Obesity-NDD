@@ -2,11 +2,11 @@ library(nebula)
 library(Seurat)
 library(SeuratDisk)
 
-var <- "bmi_lv"
+var <- "bmi_normalized"
 # var <- "AD_states"
 indir = commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
 
-filename <- list.files(indir, pattern=".rds")[1]
+filename <- list.files(indir, pattern="_bmi.rds")[1]
 
 while (is.na(filename) || length(filename) == 0) {
   print("No .rds file found in the input directory. Checking again in 5 minutes.")

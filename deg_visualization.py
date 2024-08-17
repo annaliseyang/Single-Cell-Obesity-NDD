@@ -76,14 +76,14 @@ def plot_volcano_subtypes(parent_class=None, log2fc_cutoff=1.0, ncols=5):
 
 
 if __name__ == "__main__":
-    # plot_volcano_all_classes(log2fc_cutoff=0.5, ncols=4)
-    # plot_volcano_subclasses(log2fc_cutoff=0.5, ncols=6)
-    # plot_volcano_subtypes(log2fc_cutoff=0.5, ncols=6)
+    plot_volcano_all_classes(log2fc_cutoff=0.2, ncols=4)
+    plot_volcano_subclasses(log2fc_cutoff=0.2, ncols=6)
+    plot_volcano_subtypes(log2fc_cutoff=0.2, ncols=6)
 
     for parent_class in ['Exc', 'Inh']:
-        plot_volcano_subclasses(parent_class, log2fc_cutoff=0.5)
-        plot_volcano_subtypes(parent_class, log2fc_cutoff=0.5)
+        plot_volcano_subclasses(parent_class, log2fc_cutoff=0.2)
+        plot_volcano_subtypes(parent_class, log2fc_cutoff=0.2)
 
     for parent_class in ['Ast', 'Mic', 'Oli', 'OPC', 'Vasc_Epithelia']:
-        # plot_volcano_subclasses(parent_class, log2fc_cutoff=0.5)
-        plot_volcano_subtypes(parent_class, log2fc_cutoff=0.5)
+        plot_volcano_subclasses(parent_class, log2fc_cutoff=0.2)
+        plot_volcano_subtypes(parent_class, log2fc_cutoff=0.2)
