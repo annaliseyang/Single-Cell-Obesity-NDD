@@ -36,38 +36,54 @@ def plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff=1.0, save=Non
     plt.savefig(save)
     # plt.show()
 
-def plot_volcano_all_classes(log2fc_cutoff=1.0):
+def plot_volcano_all_classes(log2fc_cutoff=1.0, ncols=5):
     in_dir = '/home/anna_y/results/deg_bmi_lv/Class/'
     # in_paths = os.listdir('/home/anna_y/results/deg_bmi_lv/Class/*/*.Clean.tsv')
     # print(f'Files found: {in_paths}')
     classes = os.listdir(in_dir)
     print(f'Classes found: {classes}')
 
-    nrows = 3
-    ncols = (len(classes) + nrows - 1) // nrows  # This ensures enough columns
+    nrows = len(classes) // ncols + 1
     print(f'Grid layout: {nrows} rows x {ncols} columns')
     plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save='figures/deg/volcano_all_classes.png')
 
-
-def plot_volcano_subclasses(parent_class=None, log2fc_cutoff=1.0):
+def plot_volcano_subclasses(parent_class=None, log2fc_cutoff=1.0, ncols=5):
     in_dir = '/home/anna_y/results/deg_bmi_lv/Subclass/'
-    # in_paths = os.listdir('/home/anna_y/results/deg_bmi_lv/Subclass/*/*.Clean.tsv')
-    # print(f'Files found: {in_paths}')
     classes = os.listdir(in_dir)
     if parent_class:
+        # only include subclasses of the parent class
         classes = [c for c in classes if parent_class in c]
     print(f'Classes found: {classes}')
 
-    nrows = 5
-    ncols = len(classes) // nrows + 1
+    nrows = len(classes) // ncols + 1
     print(f'Grid layout: {nrows} rows x {ncols} columns')
     out_path = f'figures/deg/volcano_{parent_class}_subclasses.png'
     plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save=out_path)
     print(f'Volcano plots saved to {out_path}.')
 
-if __name__ == "__main__":
-    plot_volcano_all_classes(log2fc_cutoff=0.5)
-    plot_volcano_subclasses(log2fc_cutoff=0.5)
+def plot_volcano_subtypes(parent_class=None, log2fc_cutoff=1.0, ncols=5):
+    in_dir = '/home/anna_y/results/deg_bmi_lv/Subtype/'
+    classes = os.listdir(in_dir)
+    if parent_class:
+        classes = [c for c in classes if parent_class in c]
+    print(f'Classes found: {classes}')
 
-    for parent_class in ['Exc', 'Inh', 'End']:
+    nrows = len(classes) // ncols + 1
+    print(f'Grid layout: {nrows} rows x {ncols} columns')
+    out_path = f'figures/deg/volcano_{parent_class}_subtypes.png'
+    plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save=out_path)
+    print(f'Volcano plots saved to {out_path}.')
+
+
+if __name__ == "__main__":
+    # plot_volcano_all_classes(log2fc_cutoff=0.5, ncols=4)
+    # plot_volcano_subclasses(log2fc_cutoff=0.5, ncols=6)
+    # plot_volcano_subtypes(log2fc_cutoff=0.5, ncols=6)
+
+    for parent_class in ['Exc', 'Inh']:
         plot_volcano_subclasses(parent_class, log2fc_cutoff=0.5)
+        plot_volcano_subtypes(parent_class, log2fc_cutoff=0.5)
+
+    for parent_class in ['Ast', 'Mic', 'Oli', 'OPC', 'Vasc_Epithelia']:
+        # plot_volcano_subclasses(parent_class, log2fc_cutoff=0.5)
+        plot_volcano_subtypes(parent_class, log2fc_cutoff=0.5)
