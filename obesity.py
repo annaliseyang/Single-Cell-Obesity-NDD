@@ -85,7 +85,6 @@ def umap_top_n_genes_by_groups(subsets, colors: list, n_top=5, groupby:str=None,
         for col, group in enumerate(subsets.keys()):
             subset = subsets[group]
             try:
-                # sc.tl.umap(subset)
                 sc.pl.umap(subset, color=color, vmax=vmax, vmin=vmin, ax=axs[row, col], show=False)
                 axs[row, col].set_title(f"{color}, {group}")
             except Exception as e:
