@@ -11,7 +11,8 @@
 # script=deg_results.py
 
 pattern=/home/anna_y/data/write/*/*/*.h5ad
-script=deg_heatmap.py
+# script=deg_heatmap.py
+script=deg_umap.py
 
 # Loop through each file in the directory
 for file in $pattern; do

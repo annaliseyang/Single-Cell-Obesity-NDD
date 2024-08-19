@@ -1,24 +1,15 @@
-from plot import *
 from deg import get_top_n_genes, rank_genes_groups
-
-# if __name__ == "__main__":
-# adata = load_data(f'/home/anna_y/data/write/processed_{DATASET}_Jun17_2024.h5ad')
-# g1 = adata[adata.obs['bmi_lv'] > 30, :]
-# g2 = adata[(adata.obs['bmi_lv'] > 25) & (adata.obs['bmi_lv'] < 30), :]
-# g3 = adata[(adata.obs['bmi_lv'] > 20) & (adata.obs['bmi_lv'] < 25), :]
-# g4 = adata[adata.obs['bmi_lv'] < 20, :]
+from utils import log
+import scanpy as sc
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
 
 def categorize_bmi(adata, num_bins=4):
     adata.obs['bmi_groups'] = pd.cut(adata.obs['bmi_lv'], bins=[0, 20, 25, 30, np.inf], labels=['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+'])
     return adata
 
-# groups = [g1, g2, g3, g4]
-bmi_groups = ['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
-bmi_subsets = {group: adata[adata.obs['bmi_groups'] == group] for group in bmi_groups}
-AD_groups = ['earlyAD', 'lateAD', 'nonAD']
-AD_subsets = {state: adata[adata.obs['ADdiag3types'].isin([state]) | adata.obs['Pathology'].isin([state])] for state in AD_groups}
-celltypes = ['Exc', 'Inh', 'Oli', 'Ast', 'Mic_Immune', 'OPC', 'Vasc_Epithelia']
-celltype_subsets = {celltype: adata[adata.obs['RNA.Class.Jun21_2024'] == celltype, :] for celltype in celltypes}
 
 def print_cell_counts_and_percentages(adata):
     for group in bmi_groups:
@@ -32,11 +23,6 @@ def print_cell_counts_and_percentages(adata):
         print(f"Number of cells {state}:", num_cells)
         print(f"Percentage of cells {state}: {num_cells / len(adata) * 100:.2f}%\n")
 
-highest_expr_genes = log(sc.pl.highest_expr_genes)
-obesity_genes = get_top_n_genes('bmi_30+', 'rank_genes_groups_bmi.csv', n_genes=20)
-anti_obesity_genes = get_top_n_genes('bmi_<20', 'rank_genes_groups_bmi.csv', n_genes=20)
-early_AD_genes = get_top_n_genes('earlyAD', 'rank_genes_groups_AD.csv', n_genes=20)
-late_AD_genes = get_top_n_genes('lateAD', 'rank_genes_groups_AD.csv', n_genes=20)
 
 def plot_celltypes_by_bmi(adata):
     for group in bmi_groups:
@@ -46,25 +32,25 @@ def plot_celltypes_by_bmi(adata):
         # sc.pl.umap(subset, obesity_genes, save=f'_{group}_obesity_genes.png')
 
 def highest_expr_genes_by_bmi(adata, n_top=20, save=None):
+    from plot import plot_celltypes
     for name, group in bmi_subsets.items():
         print(f"Number of cells in group {group.obs['bmi_lv'].unique()[0]}: {len(group)}")
         # plot highest expressed genes
-        highest_expr_genes(group, n_top=20, save=f'_{DATASET}_{name}.png')
+        highest_expr_genes(group, n_top=20, save=f'_{name}.png')
 
         plot_celltypes(group)
 
-        sc.pl.umap(group, color='RNA.Class.Jun21_2024', save=f'_{DATASET}_{name}_RNA.Class.Jun21_2024.png')
-        # sc.pl.umap(group, color='RNA.Subtype.Jun21_2024', save=f'_{DATASET}_RNA.Subtype.Jun21_2024.png')
-        # sc.pl.umap(group, color='RNA.Subclass.Jun21_2024', save=f'_{DATASET}_RNA.Subclass.Jun21_2024.png')
+        sc.pl.umap(group, color='RNA.Class.Jun21_2024', save=f'_{name}_RNA.Class.Jun21_2024.png')
 
 @log
 def umap_by_groups(subsets, color='RNA.Class.Jun21_2024', groupby:str=None, save=None):
     side_length = 4
     fig, axs = plt.subplots(1, len(subsets), figsize=(len(subsets) * side_length, side_length), sharex=True, sharey=True)
     vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in subsets.values()]), 99)
+    vmin = 0
     for i, group in enumerate(subsets.keys()):
         subset = subsets[group]
-        sc.pl.umap(subset, color=color, vmax=vmax, ax=axs[i], show=False)
+        sc.pl.umap(subset, color=color, vmax=vmax, vmin=vmin, ax=axs[i], show=False)
         axs[i].set_title(f"{color}, {group}")
     plt.tight_layout()
     if save:
@@ -76,10 +62,11 @@ def umap_by_groups(subsets, color='RNA.Class.Jun21_2024', groupby:str=None, save
 def umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024', save=None):
     fig, axs = plt.subplots(1, 4, figsize=(20, 5), sharex=True, sharey=True)
     vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in bmi_subsets.values()]), 99)
+    vmin = 0
 
     for i, group in enumerate(bmi_groups):
         subset = bmi_subsets[group]
-        sc.pl.umap(subset, color=color, vmax=vmax, ax=axs[i], show=False)
+        sc.pl.umap(subset, color=color, vmax=vmax, vmin=vmin, ax=axs[i], show=False)
         axs[i].set_title(f"{color}, {group}")
 
     plt.tight_layout()
@@ -94,10 +81,12 @@ def umap_top_n_genes_by_groups(subsets, colors: list, n_top=5, groupby:str=None,
     fig, axs = plt.subplots(n_top, len(subsets), figsize=(len(subsets) * width, n_top * height), sharex=True, sharey=True)
     for row, color in enumerate(colors[:n_top]):
         vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in subsets.values()]), 99)
+        vmin = 0
         for col, group in enumerate(subsets.keys()):
             subset = subsets[group]
             try:
-                sc.pl.umap(subset, color=color, vmax=vmax, ax=axs[row, col], show=False)
+                # sc.tl.umap(subset)
+                sc.pl.umap(subset, color=color, vmax=vmax, vmin=vmin, ax=axs[row, col], show=False)
                 axs[row, col].set_title(f"{color}, {group}")
             except Exception as e:
                 print(f"Error plotting {color} for {group}: {e}")
@@ -145,6 +134,23 @@ if __name__ == "__main__":
     # umap_top_n_genes_by_bmi(bmi_subsets, colors=anti_obesity_genes, n_top=5, save=f"figures/bmi/umap_antiobesity_genes_by_bmi.png")
     # umap_top_n_genes_by_groups(AD_subsets, colors=early_AD_genes, groupby='AD', n_top=5, save=f"figures/AD/umap_early_AD_genes_by_AD_states.png")
     # umap_top_n_genes_by_groups(AD_subsets, colors=late_AD_genes, groupby='AD', n_top=5, save=f"figures/AD/umap_late_AD_genes_by_AD_states.png")
+
+    in_path = sys.argv[1]
+    adata = sc.read_h5ad(in_path)
+
+    # groups = [g1, g2, g3, g4]
+    bmi_groups = ['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
+    bmi_subsets = {group: adata[adata.obs['bmi_groups'] == group] for group in bmi_groups}
+    AD_groups = ['earlyAD', 'lateAD', 'nonAD']
+    AD_subsets = {state: adata[adata.obs['ADdiag3types'].isin([state]) | adata.obs['Pathology'].isin([state])] for state in AD_groups}
+    celltypes = ['Exc', 'Inh', 'Oli', 'Ast', 'Mic_Immune', 'OPC', 'Vasc_Epithelia']
+    celltype_subsets = {celltype: adata[adata.obs['RNA.Class.Jun21_2024'] == celltype, :] for celltype in celltypes}
+
+    highest_expr_genes = log(sc.pl.highest_expr_genes)
+    obesity_genes = get_top_n_genes('bmi_30+', 'rank_genes_groups_bmi.csv', n_genes=20)
+    anti_obesity_genes = get_top_n_genes('bmi_<20', 'rank_genes_groups_bmi.csv', n_genes=20)
+    early_AD_genes = get_top_n_genes('earlyAD', 'rank_genes_groups_AD.csv', n_genes=20)
+    late_AD_genes = get_top_n_genes('lateAD', 'rank_genes_groups_AD.csv', n_genes=20)
 
     for type, subset in celltype_subsets.items():
         # make subsets for each cell type
