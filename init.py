@@ -10,11 +10,12 @@ import json
 
 ###################################
 
-DATASET = "AD427"
+DATASET = "All"
 PATH = "/home/anna_y/data/HumanBrainObesity/snRNA/"
 FILENAME = "rna2.AD427_ADMR.QC.3343094.Jun24_2024.h5ad"
 
 PROCESSED_DATA_PATH = "/home/anna_y/data/processed/"
+in_path = sys.argv[1]
 
 ###################################
 
@@ -23,18 +24,7 @@ def init_settings():
     sc.logging.print_header()
     sc.settings.set_figure_params(dpi=80, facecolor="white")
 
-@log
-def load_data(dataset, path):
-    adata = sc.read(path, cache=True)
-    # adata.var_names_make_unique()
-
-    # results_file = f"/home/anna_y/data/write/{dataset}.h5ad"  # the file that will store the analysis results
-    # adata.write(results_file)
-
-    return adata
-
 init_settings()
-# adata = load_data(DATASET, f'/home/anna_y/data/write/processed_{DATASET}_Jun17_2024.h5ad')
-adata = load_data(DATASET, '/home/anna_y/data/write/AD427_ADMR_meta_Jul22_2024.h5ad')
+adata = sc.read_h5ad(in_path)
 print("Data loaded!", flush=True)
 print(adata, flush=True)
