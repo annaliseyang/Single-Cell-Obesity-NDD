@@ -80,8 +80,13 @@ def umap_top_n_genes_by_groups(subsets, colors: list, n_top=5, groupby:str=None,
     width, height = 4, 3.5
     fig, axs = plt.subplots(n_top, len(subsets), figsize=(len(subsets) * width, n_top * height), sharex=True, sharey=True)
     for row, color in enumerate(colors[:n_top]):
-        vmax = np.percentile(np.concatenate([subset[:, color].X.toarray().flatten() for subset in subsets.values()]), 99)
+        values = np.concatenate([subset[:, color].X.toarray().flatten() for subset in subsets.values()])
+        vmax = np.percentile(values, 99)
+        if vmax == 0:
+            # If no expression at the 99th percentile, set vmax to max expression
+            vmax = max(values)
         vmin = 0
+        print(f"Plotting {color}... vmax: {vmax}, vmin: {vmin}")
         for col, group in enumerate(subsets.keys()):
             subset = subsets[group]
             try:

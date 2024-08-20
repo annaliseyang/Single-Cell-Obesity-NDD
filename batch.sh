@@ -10,7 +10,7 @@
 # pattern=/home/anna_y/results/deg_bmi_normalized/all/*/*.Clean.tsv
 # script=deg_results.py
 
-pattern=/home/anna_y/data/write/*/*/*.h5ad
+pattern=/home/anna_y/data/write/all/*/*.h5ad
 # script=deg_heatmap.py
 script=deg_umap.py
 
