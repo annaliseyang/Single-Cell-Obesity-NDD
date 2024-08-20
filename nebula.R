@@ -19,7 +19,6 @@ print(paste("Found .rds file:", filename))
 
 name <- sub(".rds", "", filename)
 sample.col <- "Sample"
-# out_dir <- "~/results/deg/"
 out_dir <- sub("data/write", paste0("results/", "deg_", var), indir)
 
 # create the out_dir if it doesn't exist

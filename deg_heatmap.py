@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     adata = sc.read_h5ad(in_path)
     adata = adata[adata.obs['bmi_lv'].notna(), :]
-    # deg_results_file = sys.argv[2] # e.g. /home/anna_y/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
+    # deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
     deg_results_file = in_path.replace('data/write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
     print(f'Loading DEG results file: {deg_results_file}')
     out_path = f'_{name}.png'

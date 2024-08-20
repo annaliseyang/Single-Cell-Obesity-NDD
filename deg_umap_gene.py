@@ -60,13 +60,13 @@ if __name__ == "__main__":
     adata = sc.read_h5ad(in_path)
     adata = adata[adata.obs['bmi_lv'].notna(), :] # remove cells with missing bmi values
 
-    # deg_results_file = sys.argv[2] # e.g. /home/anna_y/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
+    # deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
     deg_results_file = in_path.replace('data/write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
     print(f'Loading DEG results file: {deg_results_file}', flush=True)
     # n_top = 3 # number of top positive and negative DEGs to plot
 
-    out_path = f'figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_bmi_groups.png'
+    out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_bmi_groups.png'
     umap_gene(adata, gene, x_groupby='bmi_groups_0', y_groupby=y_groupby, save=out_path)
 
-    out_path = f'figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_AD_states.png'
+    out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_AD_states.png'
     umap_gene(adata, gene, x_groupby='AD_states', y_groupby=y_groupby, save=out_path)

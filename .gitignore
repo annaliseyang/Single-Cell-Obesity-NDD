@@ -3,6 +3,7 @@ __pycache__/
 *.err
 log/
 data/
+figures/
 HumanBrainObesity/
 .RData
 .Rhistory

@@ -56,7 +56,7 @@ def umap_by_groups(subsets, color='RNA.Class.Jun21_2024', groupby:str=None, save
     if save:
         plt.savefig(save)
     else:
-        plt.savefig(f"figures/{groupby}/umap_{color}_by_{groupby}.png")
+        plt.savefig(f"/home/anna_y/data/results/figures/{groupby}/umap_{color}_by_{groupby}.png")
 
 @log
 def umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024', save=None):
@@ -73,7 +73,7 @@ def umap_by_bmi(bmi_subsets, color='RNA.Class.Jun21_2024', save=None):
     if save:
         plt.savefig(save)
     else:
-        plt.savefig(f"figures/bmi/umap_{color}_p99_by_bmi.png")
+        plt.savefig(f"/home/anna_y/data/results/figures/bmi/umap_{color}_p99_by_bmi.png")
 
 @log
 def umap_top_n_genes_by_groups(subsets, colors: list, n_top=5, groupby:str=None, save=None):
@@ -99,7 +99,7 @@ def umap_top_n_genes_by_groups(subsets, colors: list, n_top=5, groupby:str=None,
     if save:
         plt.savefig(save)
     else:
-        plt.savefig(f"figures/{groupby}/umap_top_{n_top}_genes_by_{groupby}.png")
+        plt.savefig(f"/home/anna_y/data/results/figures/{groupby}/umap_top_{n_top}_genes_by_{groupby}.png")
 
 @log
 def umap_top_n_genes_by_bmi(bmi_subsets, colors, n_top=5, save=None):
@@ -132,12 +132,12 @@ if __name__ == "__main__":
     # for gene in obesity_genes:
     #     umap_by_bmi(bmi_subsets, color=gene)
     # for gene in late_AD_genes:
-    #     umap_by_groups(AD_subsets, color=gene, save=f"figures/AD/umap_{gene}.png")
+    #     umap_by_groups(AD_subsets, color=gene, save=f"/home/anna_y/data/results/figures/AD/umap_{gene}.png")
 
     # umap_top_n_genes_by_bmi(bmi_subsets, colors=obesity_genes, n_top=10)
-    # umap_top_n_genes_by_bmi(bmi_subsets, colors=anti_obesity_genes, n_top=5, save=f"figures/bmi/umap_antiobesity_genes_by_bmi.png")
-    # umap_top_n_genes_by_groups(AD_subsets, colors=early_AD_genes, groupby='AD', n_top=5, save=f"figures/AD/umap_early_AD_genes_by_AD_states.png")
-    # umap_top_n_genes_by_groups(AD_subsets, colors=late_AD_genes, groupby='AD', n_top=5, save=f"figures/AD/umap_late_AD_genes_by_AD_states.png")
+    # umap_top_n_genes_by_bmi(bmi_subsets, colors=anti_obesity_genes, n_top=5, save=f"/home/anna_y/data/results/figures/bmi/umap_antiobesity_genes_by_bmi.png")
+    # umap_top_n_genes_by_groups(AD_subsets, colors=early_AD_genes, groupby='AD', n_top=5, save=f"/home/anna_y/data/results/figures/AD/umap_early_AD_genes_by_AD_states.png")
+    # umap_top_n_genes_by_groups(AD_subsets, colors=late_AD_genes, groupby='AD', n_top=5, save=f"/home/anna_y/data/results/figures/AD/umap_late_AD_genes_by_AD_states.png")
 
     in_path = sys.argv[1]
     adata = sc.read_h5ad(in_path)
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         # for group in ['earlyAD', 'lateAD']:
         #     markers = get_top_n_genes('earlyAD', f'rank_genes_groups_{type}_by_AD_states.csv', n_genes=20)
         #     print(f"Top 20 early AD genes for {type}: {markers}", flush=True)
-        #     umap_top_n_genes_by_groups(AD_subsets, colors=markers, n_top=5, save=f'figures/celltypes/{type}_early_AD_genes_celltype_specific.png')
+        #     umap_top_n_genes_by_groups(AD_subsets, colors=markers, n_top=5, save=f'/home/anna_y/data/results/figures/celltypes/{type}_early_AD_genes_celltype_specific.png')
 
         groupby = 'bmi_groups'
         print(f"Computing DEG results for {type} by {groupby}...", flush=True)
@@ -176,24 +176,24 @@ if __name__ == "__main__":
             # try:
             #     markers = get_top_n_genes(group, f'rank_genes_groups_{type}_by_bmi_groups.csv', n_genes=20)
             #     print(f"Top 20 bmi genes for {type}: {markers}", flush=True)
-            #     umap_top_n_genes_by_groups(bmi_subsets, colors=markers, n_top=5, save=f'figures/celltypes/{type}_bmi_genes_celltype_specific.png')
+            #     umap_top_n_genes_by_groups(bmi_subsets, colors=markers, n_top=5, save=f'/home/anna_y/data/results/figures/celltypes/{type}_bmi_genes_celltype_specific.png')
             # except Exception as e:
 
             markers = get_top_n_genes(group, f'rank_genes_groups_{type}_by_{groupby}.csv', n_genes=20)
-            umap_top_n_genes_by_groups(bmi_subsets, colors=markers, n_top=5, save=f'figures/celltypes/{type}_{group}_genes_celltype_specific.png')
+            umap_top_n_genes_by_groups(bmi_subsets, colors=markers, n_top=5, save=f'/home/anna_y/data/results/figures/celltypes/{type}_{group}_genes_celltype_specific.png')
 
 
 
 
-        # # umap_by_groups(AD_subsets, 'SLC38A2', groupby='celltype', save=f'figures/celltypes/{type}_early_AD_SLC38A2.png')
+        # # umap_by_groups(AD_subsets, 'SLC38A2', groupby='celltype', save=f'/home/anna_y/data/results/figures/celltypes/{type}_early_AD_SLC38A2.png')
         # for gene in early_AD_genes[:5]:
-        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_early_AD_{gene}.png')
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'/home/anna_y/data/results/figures/celltypes/{type}_early_AD_{gene}.png')
         # for gene in late_AD_genes[:5]:
-        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_late_AD_{gene}.png')
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'/home/anna_y/data/results/figures/celltypes/{type}_late_AD_{gene}.png')
         # for gene in obesity_genes[:5]:
-        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_obesity_{gene}.png')
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'/home/anna_y/data/results/figures/celltypes/{type}_obesity_{gene}.png')
         # for gene in anti_obesity_genes[:5]:
-        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'figures/celltypes/{type}_anti_obesity_{gene}.png')
+        #     umap_by_groups(AD_subsets, color=gene, groupby='celltype', save=f'/home/anna_y/data/results/figures/celltypes/{type}_anti_obesity_{gene}.png')
 
 
     # heatmap_by_bmi(adata, n_genes=5)

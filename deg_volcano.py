@@ -36,18 +36,18 @@ def plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff=0.2, save=Non
     # plt.show()
 
 def plot_volcano_all_classes(log2fc_cutoff=0.2, ncols=5):
-    in_dir = '/home/anna_y/results/deg_bmi_normalized/Class/'
-    # in_paths = os.listdir('/home/anna_y/results/deg_bmi_lv/Class/*/*.Clean.tsv')
+    in_dir = '/home/anna_y/data/results/deg_bmi_normalized/Class/'
+    # in_paths = os.listdir('/home/anna_y/data/results/deg_bmi_lv/Class/*/*.Clean.tsv')
     # print(f'Files found: {in_paths}')
     classes = os.listdir(in_dir)
     print(f'Classes found: {classes}')
 
     nrows = len(classes) // ncols + 1
     print(f'Grid layout: {nrows} rows x {ncols} columns')
-    plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save='figures/deg_bmi_normalized/volcano_all_classes.png')
+    plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save='/home/anna_y/data/results/figures/deg_bmi_normalized/volcano_all_classes.png')
 
 def plot_volcano_subclasses(parent_class=None, log2fc_cutoff=1.0, ncols=5):
-    in_dir = '/home/anna_y/results/deg_bmi_normalized/Subclass/'
+    in_dir = '/home/anna_y/data/results/deg_bmi_normalized/Subclass/'
     classes = os.listdir(in_dir)
     if parent_class:
         # only include subclasses of the parent class
@@ -56,12 +56,12 @@ def plot_volcano_subclasses(parent_class=None, log2fc_cutoff=1.0, ncols=5):
 
     nrows = len(classes) // ncols + 1
     print(f'Grid layout: {nrows} rows x {ncols} columns')
-    out_path = f'figures/deg_bmi_normalized/volcano_{parent_class}_subclasses.png'
+    out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/volcano_{parent_class}_subclasses.png'
     plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save=out_path)
     print(f'Volcano plots saved to {out_path}.')
 
 def plot_volcano_subtypes(parent_class=None, log2fc_cutoff=0.2, ncols=5):
-    in_dir = '/home/anna_y/results/deg_bmi_normalized/Subtype/'
+    in_dir = '/home/anna_y/data/results/deg_bmi_normalized/Subtype/'
     classes = os.listdir(in_dir)
     if parent_class:
         classes = [c for c in classes if parent_class in c]
@@ -69,7 +69,7 @@ def plot_volcano_subtypes(parent_class=None, log2fc_cutoff=0.2, ncols=5):
 
     nrows = len(classes) // ncols + 1
     print(f'Grid layout: {nrows} rows x {ncols} columns')
-    out_path = f'figures/deg_bmi_normalized/volcano_{parent_class}_subtypes.png'
+    out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/volcano_{parent_class}_subtypes.png'
     plot_volcano_grid(in_dir, classes, nrows, ncols, log2fc_cutoff, save=out_path)
     print(f'Volcano plots saved to {out_path}.')
 

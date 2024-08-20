@@ -77,7 +77,7 @@ def plot_bmi_AD(adata):
     fig, axs = plt.subplots(1, 2, figsize=(12, 6))
     sns.boxplot(data=df, x='ADdiag3types', y='bmi_lv', ax=axs[0])
     sns.boxplot(data=df, x='ADdiag2types', y='bmi_lv', ax=axs[1])
-    plt.savefig('figures/boxplot_bmi_AD_unique.png')
+    plt.savefig('/home/anna_y/data/results/figures/boxplot_bmi_AD_unique.png')
 
 
 def plot_bmi_pathology(adata, column):
@@ -89,7 +89,7 @@ def plot_bmi_pathology(adata, column):
     unique_bmi_pathology = adata.obs[['projid', 'bmi_lv', column]].loc[adata.obs['projid'].isin(unique_projids)].drop_duplicates()
     fig, ax = plt.subplots(figsize=(8, 6))
     sns.boxplot(data=unique_bmi_pathology, x=column, y='bmi_lv', ax=ax)
-    plt.savefig(f'figures/boxplot_bmi_{column}_unique.png')
+    plt.savefig(f'/home/anna_y/data/results/figures/boxplot_bmi_{column}_unique.png')
     return unique_bmi_pathology.dropna()
 
 AD427_metadata = get_AD427_metadata(AD427_META_PATH)
@@ -134,21 +134,21 @@ if __name__ == "__main__":
 # fig, axs = plt.subplots(1, 2, figsize=(12, 6))
 # sns.boxplot(data=AD427.obs, x='ADdiag3types', y='bmi_lv', ax=axs[0])
 # sns.boxplot(data=AD427.obs, x='ADdiag2types', y='bmi_lv', ax=axs[1])
-# plt.savefig('figures/boxplot_bmi_AD.png')
+# plt.savefig('/home/anna_y/data/results/figures/boxplot_bmi_AD.png')
 
 # plt.figure(figsize=(8, 6))
 # # sns.boxplot(data=AD427.obs, x='ADdiag3types', y='bmi_lv')
 # sns.boxplot(data=AD427.obs, x='ADdiag2types', y='bmi_lv')
-# plt.savefig('figures/boxplot_bmi_ADdiag2types.png')
+# plt.savefig('/home/anna_y/data/results/figures/boxplot_bmi_ADdiag2types.png')
 
 # bmi_lv = [info['bmi_lv'] for info in AD427_metadata.values()]
 # ADdiag3types = [info['ADdiag3types'] for info in AD427_metadata.values()]
 # df = pd.DataFrame({'bmi_lv': bmi_lv, 'ADdiag3types': ADdiag3types})
 # plt.figure(figsize=(8, 6))
 # sns.boxplot(data=df, x='ADdiag3types', y='bmi_lv')
-# plt.savefig('figures/boxplot_bmi_lv_ADdiag3types.png')
+# plt.savefig('/home/anna_y/data/results/figures/boxplot_bmi_lv_ADdiag3types.png')
 
 # plt.figure(figsize=(8, 6))
 # sns.boxplot(data=ADMR.obs, x='Pathology', y='bmi_lv')
 # plt.show()
-# plt.savefig('figures/ADMR_bmi_boxplot.png')
+# plt.savefig('/home/anna_y/data/results/figures/ADMR_bmi_boxplot.png')

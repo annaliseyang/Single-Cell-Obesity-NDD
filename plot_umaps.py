@@ -14,7 +14,7 @@ print(data, flush=True)
 umap = log(sc.pl.umap)
 
 for key in data.obs.columns:
-    if f'umap_{DATASET}_{key}.png' in os.listdir('/home/anna_y/scRNA/figures/'):
+    if f'umap_{DATASET}_{key}.png' in os.listdir('/home/anna_y/scRNA//home/anna_y/data/results/figures/'):
         print(f"UMAP for {key} already exists!", flush=True)
         continue
 

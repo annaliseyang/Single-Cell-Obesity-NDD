@@ -7,7 +7,7 @@
 # pattern=/home/anna_y/data/write/Class/*/ # for nebula
 # script=nebula.R
 
-# pattern=/home/anna_y/results/deg_bmi_normalized/all/*/*.Clean.tsv
+# pattern=/home/anna_y/data/results/deg_bmi_normalized/all/*/*.Clean.tsv
 # script=deg_results.py
 
 pattern=/home/anna_y/data/write/Subclass/*/*.h5ad

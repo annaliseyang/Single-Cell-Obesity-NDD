@@ -14,7 +14,7 @@ highest_expr_genes = [gene for gene in highest_expr_genes if gene in adata.var_n
 cell_types = ['RNA.Subtype.Jun21_2024', 'RNA.Class.Jun21_2024', 'RNA.Subclass.Jun21_2024']
 
 def plot(adata, key):
-    if f'{name.lower()}_{DATASET}_{key}.png' in os.listdir('/home/anna_y/scRNA/figures/'):
+    if f'{name.lower()}_{DATASET}_{key}.png' in os.listdir('/home/anna_y/scRNA//home/anna_y/data/results/figures/'):
         print(f"{name} for {key} already exists!", flush=True)
         return
 
@@ -27,7 +27,7 @@ def plot(adata, key):
 
 def plot_each(adata, keys):
     for key in keys:
-        if f'{name.lower()}_{DATASET}_{key}.png' in os.listdir('/home/anna_y/scRNA/figures/'):
+        if f'{name.lower()}_{DATASET}_{key}.png' in os.listdir('/home/anna_y/scRNA//home/anna_y/data/results/figures/'):
             print(f"{name} for {key} already exists!", flush=True)
             continue
 
