@@ -50,6 +50,6 @@ if __name__ == "__main__":
     print(f'Loading DEG results file: {deg_results_file}', flush=True)
     n_top = 3 # number of top positive and negative DEGs to plot
 
-    out_path = f'figures/deg_bmi_normalized/umap_{name}_bmi_groups.png'
+    out_path = f'figures/deg_bmi_normalized/celltypes/umap_{name}_bmi_groups.png'
     deg_umap(adata, deg_results_file, n_top=n_top, save=out_path)
     print(f'UMAP saved to {out_path}')
