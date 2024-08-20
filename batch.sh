@@ -1,19 +1,19 @@
 #!/bin/bash
 # Batch process all files
 
-# pattern=/home/anna_y/data/write/Class/*/*.rds # for normalize_bmi
+# pattern=/home/anna_y/data/write/AD_states/*/*.rds
 # script=normalize_bmi.R
 
-# pattern=/home/anna_y/data/write/Class/*/ # for nebula
+# pattern=/home/anna_y/data/write/AD_states/*/
 # script=nebula.R
 
-# pattern=/home/anna_y/data/results/deg_bmi_normalized/all/*/*.Clean.tsv
-# script=deg_results.py
+pattern=/home/anna_y/data/results/deg_bmi_normalized/AD_states/*/*.Clean.tsv
+script=deg_results.py
 
-pattern=/home/anna_y/data/write/Subclass/*/*.h5ad
-# script=deg_heatmap.py
-# script=deg_umap.py
-script=bmi_groups.py
+# pattern=/home/anna_y/data/write/Subclass/*/*.h5ad
+# # script=deg_heatmap.py
+# # script=deg_umap.py
+# script=bmi_groups.py
 
 # Loop through each file in the directory
 for file in $pattern; do

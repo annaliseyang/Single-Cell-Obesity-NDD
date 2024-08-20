@@ -17,9 +17,9 @@ while (is.na(filename) || length(filename) == 0) {
 # Proceed with the rest of the code after an .rds file is found
 print(paste("Found .rds file:", filename))
 
-name <- sub(".rds", "", filename)
+name <- sub("_bmi.rds", "", filename)
 sample.col <- "Sample"
-out_dir <- sub("data/write", paste0("results/", "deg_", var), indir)
+out_dir <- sub("write", paste0("results", "/deg_", var), indir)
 
 # create the out_dir if it doesn't exist
 dir.create(out_dir, recursive = TRUE)
