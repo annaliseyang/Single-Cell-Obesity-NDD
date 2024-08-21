@@ -46,7 +46,7 @@ if __name__ == "__main__":
     adata = adata[adata.obs['bmi_lv'].notna(), :] # remove cells with missing bmi values
 
     # deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
-    deg_results_file = in_path.replace('data/write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
+    deg_results_file = in_path.replace('write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
     print(f'Loading DEG results file: {deg_results_file}', flush=True)
     n_top = 3 # number of top positive and negative DEGs to plot
 

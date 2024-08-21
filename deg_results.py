@@ -24,6 +24,23 @@ def rank_deg_results(results_file, sort_by='log2FC'):
     results_sorted.to_csv(out_path, sep='\t', index=False)
     print(f'Sorted DEG results saved to: {out_path}')
 
+def get_top_degs(results_file, n_top=20, positive=True):
+    """
+    Return the top n genes based on log2FC.
+    positive (bool) indicates whether to return positive or negative log2FC genes.
+    """
+    results = pd.read_csv(results_file, sep='\t')
+    if positive:
+        results = results[results['log2FC'] > 0]
+        top_genes = results.head(n_top)['gene'].tolist()
+    elif positive == False:
+        results = results[results['log2FC'] < 0]
+        top_genes = results.tail(n_top)['gene'].tolist()
+    else:
+        print(f"'positive' parameter not set. Returning top {n_top} DEGs.")
+        top_genes = results.head(n_top)['gene'].tolist()
+    return top_genes
+
 if __name__ == "__main__":
     results_file = sys.argv[1]
     rank_deg_results(results_file)

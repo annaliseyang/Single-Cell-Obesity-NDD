@@ -6,17 +6,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from obesity import umap_top_n_genes_by_bmi
+from deg_results import filter_deg_results, rank_deg_results, get_top_degs
 
-# bmi_groups = ['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
 
-def umap_gene(adata, gene, x_groupby='bmi_groups_0', y_groupby='Subtype', save=None):
+def umap_gene(adata, gene: str, x_groupby='bmi_groups_0', y_groupby='Subtype', save=None):
     adata = adata.copy()
-    adata = adata[adata.obs[y_groupby].notna(), :] # filter cells
-    sc.pp.normalize_total(adata, target_sum=1e6)
-    # sc.pp.log1p(adata)
+    # adata = adata[adata.obs[y_groupby].notna(), :] # filter cells
+    # sc.pp.normalize_total(adata, target_sum=1e6)
+    # # sc.pp.log1p(adata)
 
-    print("Computing UMAP...", flush=True)
-    sc.tl.umap(adata, random_state=42)
+    # print("Computing UMAP...", flush=True)
+    # # sc.tl.umap(adata, random_state=42)
 
     # print(f"Plotting UMAP for gene {gene} in celltype {celltype}...", flush=True)
     # sc.pl.umap(adata, color=gene, title=f"{gene} in {celltype}", save=save)
@@ -45,14 +45,39 @@ def umap_gene(adata, gene, x_groupby='bmi_groups_0', y_groupby='Subtype', save=N
 
     plt.tight_layout()
     plt.savefig(save)
+    print(f"UMAP saved to {save}\n")
+
+
+def umap_top_degs(adata, deg_results_file, n_top=3, x_groupby='bmi_groups_0', y_groupby='Subtype'):
+    adata = adata.copy()
+    adata = adata[adata.obs[y_groupby].notna(), :] # filter cells
+    sc.pp.normalize_total(adata, target_sum=1e6)
+    # sc.pp.log1p(adata)
+
+    print("Computing UMAP...", flush=True)
+    sc.tl.umap(adata, random_state=42)
+
+    pos_degs = get_top_degs(deg_results_file, n_top=n_top, positive=True)
+    neg_degs = get_top_degs(deg_results_file, n_top=n_top, positive=False)
+    # genes = pos_degs + neg_degs
+
+    print(f'Plotting UMAPs for pos_degs: {pos_degs}', flush=True)
+    for gene in pos_degs:
+        out_path = f"/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{x_groupby}_{y_groupby}_up.png"
+        umap_gene(adata, gene, x_groupby=x_groupby, y_groupby=y_groupby, save=out_path)
+
+    print(f'Plotting UMAPs for neg_degs: {neg_degs}', flush=True)
+    for gene in neg_degs:
+        out_path = f"/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{x_groupby}_{y_groupby}_down.png"
+        umap_gene(adata, gene, x_groupby=x_groupby, y_groupby=y_groupby, save=out_path)
+
 
 
 if __name__ == "__main__":
-    in_path = sys.argv[1] # e.g. /home/anna_y/data/write/Subclass/Ast/Ast.h5ad
-    name = os.path.basename(in_path).split('.')[0] # e.g. Ast
+    in_path = sys.argv[1] # e.g. /home/anna_y/data/write/Subclass/Exc_HC/Exc_HC.h5ad
+    name = os.path.basename(in_path).split('.')[0] # e.g. Exc_HC
 
-    gene = sys.argv[2] # e.g. TBC1D3D
-    y_groupby = sys.argv[3] # e.g. Subtype
+    # gene = sys.argv[2] # e.g. TBC1D3D
 
     print(f'Loading Anndata file: {in_path}', flush=True)
     print(f'Name: {name}', flush=True)
@@ -60,13 +85,19 @@ if __name__ == "__main__":
     adata = sc.read_h5ad(in_path)
     adata = adata[adata.obs['bmi_lv'].notna(), :] # remove cells with missing bmi values
 
+    y_groupby = 'Subtype' if len(adata.obs['Subclass'].unique()) == 1 else 'Subclass'
+    print(f"Grouping by {y_groupby}...", flush=True)
+
     # deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
-    deg_results_file = in_path.replace('data/write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
+    deg_results_file = in_path.replace('write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
     print(f'Loading DEG results file: {deg_results_file}', flush=True)
-    # n_top = 3 # number of top positive and negative DEGs to plot
+    n_top = 3 # number of top positive and negative DEGs to plot
+    umap_top_degs(adata, deg_results_file, n_top=n_top, x_groupby='bmi_groups_0', y_groupby=y_groupby)
+    umap_top_degs(adata, deg_results_file, n_top=n_top, x_groupby='AD_states', y_groupby=y_groupby)
 
-    out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_bmi_groups.png'
-    umap_gene(adata, gene, x_groupby='bmi_groups_0', y_groupby=y_groupby, save=out_path)
 
-    out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_AD_states.png'
-    umap_gene(adata, gene, x_groupby='AD_states', y_groupby=y_groupby, save=out_path)
+    # out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_bmi_groups.png'
+    # umap_gene(adata, gene, x_groupby='bmi_groups_0', y_groupby=y_groupby, save=out_path)
+
+    # out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/genes/umap_{gene}_{name}_{y_groupby}_AD_states.png'
+    # umap_gene(adata, gene, x_groupby='AD_states', y_groupby=y_groupby, save=out_path)
