@@ -19,7 +19,7 @@ print(paste("Found .rds file:", filename))
 
 name <- sub("_bmi.rds", "", filename)
 sample.col <- "Sample"
-out_dir <- sub("write", paste0("results", "/deg_", var), indir)
+out_dir <- sub("write", paste0("results", "/deg_", var, "_v1"), indir)
 
 # create the out_dir if it doesn't exist
 dir.create(out_dir, recursive = TRUE)
@@ -39,7 +39,7 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
                        ncore = 12,
                        cpc = 0, reml = 1) {
 
-  covariates = c("msex", "pmi", "total_counts", "nFeature_RNA", "age_death", "gpath")
+  covariates = c("msex", "pmi", "total_counts", "age_death")
   covariates = covariates[covariates %in% colnames(Seurat_Obj@meta.data)]
   # Seurat_Obj@meta.data$pathology <- as.factor(Seurat_Obj@meta.data$pathology) # convert to factor
   head(Seurat_Obj@meta.data$pathology)

@@ -14,6 +14,7 @@ def filter_deg_results(results_file, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cuto
     out_path = results_file.replace('.tsv', '.Filtered.tsv')
     results_filtered.to_csv(out_path, sep='\t', index=False)
     print(f'Filtered DEG results saved to: {out_path}')
+    return out_path
 
 def rank_deg_results(results_file, sort_by='log2FC'):
     results = pd.read_csv(results_file, sep='\t')
@@ -23,6 +24,7 @@ def rank_deg_results(results_file, sort_by='log2FC'):
     out_path = results_file.replace('.Clean.tsv', '.Ranked.tsv')
     results_sorted.to_csv(out_path, sep='\t', index=False)
     print(f'Sorted DEG results saved to: {out_path}')
+    return out_path
 
 def get_top_degs(results_file, n_top=20, positive=True):
     """
@@ -30,19 +32,33 @@ def get_top_degs(results_file, n_top=20, positive=True):
     positive (bool) indicates whether to return positive or negative log2FC genes.
     """
     results = pd.read_csv(results_file, sep='\t')
-    if positive:
+    if positive == True:
         results = results[results['log2FC'] > 0]
-        top_genes = results.head(n_top)['gene'].tolist()
+        top_genes = results.head(n_top)['gene'].tolist() if n_top else results['gene'].tolist()
     elif positive == False:
         results = results[results['log2FC'] < 0]
-        top_genes = results.tail(n_top)['gene'].tolist()
+        top_genes = results.tail(n_top)['gene'].tolist() if n_top else results['gene'].tolist()
     else:
         print(f"'positive' parameter not set. Returning top {n_top} DEGs.")
-        top_genes = results.head(n_top)['gene'].tolist()
+        top_genes = results.head(n_top)['gene'].tolist() if n_top else results['gene'].tolist()
     return top_genes
 
 if __name__ == "__main__":
     results_file = sys.argv[1]
-    rank_deg_results(results_file)
-    results_file_ranked = results_file.replace('.Clean.tsv', '.Ranked.tsv')
-    filter_deg_results(results_file_ranked)
+    results_file_ranked = rank_deg_results(results_file)
+    results_file_filtered = filter_deg_results(results_file_ranked, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cutoff=0)
+
+    pos_degs = get_top_degs(results_file_filtered, n_top=None, positive=True)
+    neg_degs = get_top_degs(results_file_filtered, n_top=None, positive=False)
+    print(f'Top positive DEGs: {pos_degs}')
+    print(f'Top negative DEGs: {neg_degs}')
+
+    # save the top genes to a txt file
+    pos_txt_path = os.path.dirname(results_file_filtered) + '/positive.txt'
+    neg_txt_path = os.path.dirname(results_file_filtered) + '/negative.txt'
+    with open(pos_txt_path, 'w') as f:
+        f.write('\n'.join(pos_degs))
+        print(f'Top positive genes saved to {pos_txt_path}')
+    with open(neg_txt_path, 'w') as f:
+        f.write('\n'.join(neg_degs))
+        print(f'Top negative genes saved to {neg_txt_path}')
