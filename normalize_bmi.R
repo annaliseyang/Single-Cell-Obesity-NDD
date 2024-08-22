@@ -7,8 +7,7 @@ filter_cells = function(seurat_obj, var) {
     return (seurat_obj)
 }
 
-# Function to standardize BMI values in the Seurat object
-standardize_bmi = function(seurat_obj, save=NULL) {
+normalize_bmi = function(seurat_obj, save=NULL) {
     # Extract the BMI values
     bmi_lv = seurat_obj@meta.data$bmi_lv
 
@@ -26,12 +25,12 @@ standardize_bmi = function(seurat_obj, save=NULL) {
 
     # Store the normalized BMI in the metadata
     seurat_obj@meta.data$bmi_normalized = bmi_normalized
-    print(head(seurat_obj@meta.data))
+    # print(head(seurat_obj@meta.data))
 
     # Save the modified Seurat object if a path is provided
     if (!is.null(save)) {
         saveRDS(seurat_obj, save)
-        print(paste0("Output saved to: ", save))
+        print(paste0("Normalized bmi object saved to: ", save))
     }
 
     return(seurat_obj)
@@ -41,6 +40,6 @@ if (sys.nframe() == 0) {
 
     in_path = commandArgs(T)[1] # path to .rds file
     seurat_obj <- readRDS(in_path)
-    seurat_obj <- standardize_bmi(seurat_obj, save=in_path) # overwrite the input .rds file
+    seurat_obj <- normalize_bmi(seurat_obj, save=in_path) # overwrite the input .rds file
 
 }

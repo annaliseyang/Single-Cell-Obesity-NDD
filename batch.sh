@@ -1,14 +1,14 @@
 #!/bin/bash
 # Batch process all files
 
-pattern=/home/anna_y/data/write/AD_states/*/*/*.h5ad
-script=export_info_create_rds.sh
+# pattern=/home/anna_y/data/write/AD_states/*/*/*.h5ad
+# script=export_info_create_rds.sh
 
 # pattern=/home/anna_y/data/write/AD_states/*/*.rds
 # script=normalize_bmi.R
 
-# pattern=/home/anna_y/data/write/Subtype/*/
-# script=nebula.R
+pattern=/home/anna_y/data/write/AD_states/*/*/*/
+script=nebula.R
 
 # pattern=/home/anna_y/data/results/deg_bmi_normalized_v1/*/*/*.Clean.tsv
 # script=deg_results.py
@@ -25,5 +25,5 @@ for file in $pattern; do
 
   # python $script $file
   bash submit.sh $script $file
-  # exit
+  exit
 done
