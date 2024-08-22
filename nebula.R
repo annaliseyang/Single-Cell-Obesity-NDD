@@ -1,12 +1,12 @@
 library(nebula)
 library(Seurat)
 library(SeuratDisk)
+source("normalize_bmi.R")
 
 var <- "bmi_normalized"
 # var <- "AD_states"
 indir = commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
-
-filename <- list.files(indir, pattern="_bmi.rds")[1]
+filename <- list.files(indir, pattern=".rds")[1]
 
 while (is.na(filename) || length(filename) == 0) {
   print("No .rds file found in the input directory. Checking again in 5 minutes.")
@@ -17,7 +17,7 @@ while (is.na(filename) || length(filename) == 0) {
 # Proceed with the rest of the code after an .rds file is found
 print(paste("Found .rds file:", filename))
 
-name <- sub("_bmi.rds", "", filename)
+name <- sub(".rds", "", filename)
 sample.col <- "Sample"
 out_dir <- sub("write", paste0("results", "/deg_", var, "_v1"), indir)
 
@@ -25,11 +25,16 @@ out_dir <- sub("write", paste0("results", "/deg_", var, "_v1"), indir)
 dir.create(out_dir, recursive = TRUE)
 
 print("Loading data...")
-print(paste0("input directory: ", file.path(indir, filename)))
+print(paste0("input file path: ", file.path(indir, filename)))
 print(paste0("output directory: ", out_dir))
 
 seurat_obj <- readRDS(file.path(indir, filename))
+
+# normalize bmi and filter cells
+seurat_obj <- normalize_bmi(seurat_obj, save=file.path(indir, filename))
+seurat_obj <- filter_cells(seurat_obj, var=var)
 print(seurat_obj)
+
 # head(seurat_obj@meta.data)
 print("Metadata dimensions:")
 print(dim(seurat_obj@meta.data))
