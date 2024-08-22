@@ -38,3 +38,5 @@ conda activate r_env
 echo Running $script_2 on $input_dir
 Rscript $script_2 $input_dir
 conda deactivate
+
+echo Job Completed!
