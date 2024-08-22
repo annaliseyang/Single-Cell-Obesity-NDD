@@ -1,28 +1,46 @@
 library(Seurat)
 
-in_path = commandArgs(T)[1] # path to .rds file
-# in_path = "~/data/write/Subtype/Ast_DCLK1/Ast_DCLK1.rds"
+filter_cells = function(seurat_obj, var) {
+    # return a subset of cells that contain the given variable
+    filtered_cells <- rownames(seurat_obj@meta.data[!is.na(seurat_obj@meta.data[[var]]), ])
+    seurat_obj = subset(seurat_obj, cells = filtered_cells)
+    return (seurat_obj)
+}
 
-seurat_obj <- readRDS(in_path)
-print(seurat_obj)
-# metadata = seurat_obj@meta.data
+# Function to standardize BMI values in the Seurat object
+standardize_bmi = function(seurat_obj, save=NULL) {
+    # Extract the BMI values
+    bmi_lv = seurat_obj@meta.data$bmi_lv
 
-# filter cells
-filtered_cells <- rownames(seurat_obj@meta.data[!is.na(seurat_obj@meta.data$bmi_lv), ])
-seurat_obj = subset(seurat_obj, cells = filtered_cells)
-print(seurat_obj)
+    # Check for non-missing BMI values
+    non_missing_bmi = !is.na(bmi_lv)
 
-# normalize bmi (subtract mean, divide by SD)
-bmi_lv = seurat_obj@meta.data$bmi_lv
-mean = mean(bmi_lv)
-sd=sd(bmi_lv)
-print(paste0("Mean BMI: ", mean, ", SD BMI: ", sd))
+    # Calculate mean and SD only for non-missing BMI values
+    mean_bmi = mean(bmi_lv[non_missing_bmi])
+    sd_bmi = sd(bmi_lv[non_missing_bmi])
+    print(paste0("Mean BMI: ", mean_bmi, ", SD BMI: ", sd_bmi))
 
-bmi_normalized = (bmi_lv - mean) / sd
-print(bmi_normalized)
-seurat_obj@meta.data$bmi_normalized = bmi_normalized
-head(seurat_obj@meta.data)
+    # Normalize BMI (subtract mean, divide by SD) only for non-missing values
+    bmi_normalized = bmi_lv
+    bmi_normalized[non_missing_bmi] = (bmi_lv[non_missing_bmi] - mean_bmi) / sd_bmi
 
-out_path = sub(".rds", "_bmi.rds", in_path)
-saveRDS(seurat_obj, out_path)
-print(paste0("Output saved to: ", out_path))
+    # Store the normalized BMI in the metadata
+    seurat_obj@meta.data$bmi_normalized = bmi_normalized
+    print(head(seurat_obj@meta.data))
+
+    # Save the modified Seurat object if a path is provided
+    if (!is.null(save)) {
+        saveRDS(seurat_obj, save)
+        print(paste0("Output saved to: ", save))
+    }
+
+    return(seurat_obj)
+}
+
+if (sys.nframe() == 0) {
+
+    in_path = commandArgs(T)[1] # path to .rds file
+    seurat_obj <- readRDS(in_path)
+    seurat_obj <- standardize_bmi(seurat_obj, save=in_path) # overwrite the input .rds file
+
+}

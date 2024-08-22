@@ -2,10 +2,10 @@ import scanpy as sc
 import os
 import sys
 
-in_dir = "/home/anna_y/data/write/"
-filename = "AD427_ADMR_Aug6_2024.h5ad" # full dataset
-
-group_by = sys.argv[1]
+# in_dir = "/home/anna_y/data/write/"
+# filename = "AD427_ADMR_Aug6_2024.h5ad" # full dataset
+in_path = sys.argv[1] # path to full dataset, e.g. "/home/anna_y/data/write/AD427_ADMR_Aug6_2024.h5ad"
+group_by_inputs = sys.argv[2:] # e.g. "Class"
 
 def subset_and_save(adata, condition, value, out_dir, file_suffix=""):
     print(f"\nSubsetting {condition} == {value}...", flush=True)
@@ -29,8 +29,11 @@ def subset_all(adata, group_by, out_dir):
 
 if __name__ == "__main__":
     # Load the h5ad file
-    adata = sc.read_h5ad(in_dir + filename)
+    adata = sc.read_h5ad(in_path)
     print(adata, flush=True)
 
     # out_dir = os.path.join(in_dir, group_by)
-    subset_all(adata, group_by, out_dir=os.path.join(in_dir, group_by))
+    in_dir = os.path.dirname(in_path)
+    for group_by in group_by_inputs:
+        print(f"\nProcessing {group_by}...", flush=True)
+        subset_all(adata, group_by, out_dir=os.path.join(in_dir, group_by))
