@@ -46,7 +46,7 @@ def get_top_degs(results_file, n_top=20, positive=True):
 if __name__ == "__main__":
     results_file = sys.argv[1]
     results_file_ranked = rank_deg_results(results_file)
-    results_file_filtered = filter_deg_results(results_file_ranked, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cutoff=0)
+    results_file_filtered = filter_deg_results(results_file_ranked, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cutoff=0.1)
 
     pos_degs = get_top_degs(results_file_filtered, n_top=None, positive=True)
     neg_degs = get_top_degs(results_file_filtered, n_top=None, positive=False)
