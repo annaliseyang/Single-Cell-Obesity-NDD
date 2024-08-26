@@ -4,9 +4,6 @@
 # pattern=/home/anna_y/data/write/AD_states/*/*/*.h5ad
 # script=export_info_create_rds.sh
 
-# pattern=/home/anna_y/data/write/AD_states/*/*.rds
-# script=normalize_bmi.R
-
 # pattern=/home/anna_y/data/write/AD_states/*/*/*/
 # script=nebula.R
 
@@ -24,7 +21,7 @@ for file in $pattern; do
   echo ""
   echo "Running $script on $file"
 
-  python $script $file
-  # bash submit.sh $script $file
+  # python $script $file
+  bash submit.sh $script $file
   # exit
 done

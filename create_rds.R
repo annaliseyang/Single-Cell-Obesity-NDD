@@ -26,12 +26,7 @@ read_csv_chunked(counts_path, chunk_size = 100000,
 
 # Combine all sparse matrices into one large sparse matrix
 print("Combining sparse matrices...")
-# counts_sparse <- do.call(rbind, sparse_matrices)
-counts_sparse <- sparse_matrices[[1]]
-for (i in 2:length(sparse_matrices)) {
-  counts_sparse <- rbind(counts_sparse, sparse_matrices[[i]])
-  print(paste("Combined", i, "sparse matrices."))
-}
+counts_sparse <- do.call(rbind, sparse_matrices)
 
 # Transpose the counts matrix
 print("Transposing sparse matrix...")

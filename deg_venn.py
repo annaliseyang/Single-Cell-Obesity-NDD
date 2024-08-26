@@ -26,7 +26,7 @@ def venn_diagram(gene_lists_dict, save=None):
     plt.figure(figsize=(8, 8))
     classes = tuple(gene_lists_dict.keys())
     gene_sets = tuple(gene_lists_dict.values())
-    print(f"Gene sets: {gene_sets}, classes: {classes} ")
+    # print(f"Gene sets: {gene_sets}, classes: {classes} ")
     venn3(gene_sets, classes, subset_label_formatter=lambda count: f"{count}\n({count/total*100:.2f}%)")
     plt.title(f"Venn Diagram of DEGs in {classes} cells")
     if save:
@@ -38,4 +38,10 @@ if __name__ == "__main__":
     # classes = tuple(gene_lists_dict_class.keys())
     out_path = "/home/anna_y/data/results/figures/deg_bmi_normalized_v1/venn_Exc_Inh_Oli.png"
     venn_diagram(gene_lists_dict=gene_lists_dict_class, save=out_path)
+    print(f"Venn diagram saved to {out_path}")
+
+    glial_cell_types = ["Ast", "Mic_Immune", "Oli"]
+    gene_lists_dict_glial = get_gene_lists_dict("/home/anna_y/data/results/deg_bmi_normalized_v1/Class", glial_cell_types)
+    out_path = "/home/anna_y/data/results/figures/deg_bmi_normalized_v1/venn_Ast_Mic_Immune_Oli.png"
+    venn_diagram(gene_lists_dict=gene_lists_dict_glial, save=out_path)
     print(f"Venn diagram saved to {out_path}")
