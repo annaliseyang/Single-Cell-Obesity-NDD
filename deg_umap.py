@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from obesity import umap_top_n_genes_by_bmi
 
-bmi_groups = ['bmi_<20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
+bmi_groups = ['bmi_0-20', 'bmi_20-25', 'bmi_25-30', 'bmi_30+']
 
 def deg_umap(adata, deg_results_file, n_top=3, save=None):
     adata = adata.copy()

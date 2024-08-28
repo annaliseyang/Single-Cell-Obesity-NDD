@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Define paths
-SCRIPT="bmi_groups.py"
-INPUT_DIR="/home/anna_y/data/write/"
-INPUT_LIST="array_inputs.txt"
+SCRIPT="process_h5ad.py"
+INPUT_DIR="/home/anna_y/data/write/AD_states"
+INPUT_LIST="inputs/${SCRIPT}_inputs.txt"
 JOB_SCRIPT="array.sh"
 
 # Find all .h5ad files and write to array_inputs.txt
@@ -18,8 +18,10 @@ cat <<EOF > "$JOB_SCRIPT"
 #SBATCH -p kellis
 #SBATCH --array=1-${NUM_LINES}%7
 #SBATCH --job-name=${SCRIPT}
-#SBATCH --mem=55GB
+#SBATCH --mem=0
 #SBATCH --output=log/slurm-%A_%a-${SCRIPT}.out
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=anna_y@mit.edu
 
 SCRIPT=${SCRIPT}
 INPUT_LIST=${INPUT_LIST}

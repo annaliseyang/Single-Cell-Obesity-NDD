@@ -1,5 +1,4 @@
 # input_dir="/home/anna_y/data/write/Subclass/"
-# pattern=/home/anna_y/data/write/*/*_small.h5ad
 # pattern=/home/anna_y/data/results/deg_bmi_normalized/*/*/*_bmi.*
 pattern=/home/anna_y/data/results/deg_bmi_normalized_v1_metascape/Class/*.zip
 

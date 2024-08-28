@@ -67,7 +67,7 @@ if __name__ == '__main__':
     adata = sc.read_h5ad(in_path)
     print(adata)
 
-    # adata = define_bmi_groups(adata)
+    adata = define_bmi_groups(adata)
     adata = define_obesity_groups(adata)
     print(adata.obs['bmi_groups'].value_counts())
     # print(adata.obs['bmi_groups_0'].value_counts())
