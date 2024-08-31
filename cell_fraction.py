@@ -50,6 +50,9 @@ def cell_fraction_discrete(adata, groupby='bmi_groups', celltype_col='Class', to
 def compute_cell_fractions(adata, total=None, celltype_col='Class'):
     total_cells = total if total else adata.obs.shape[0]
     cell_fractions = adata.obs.groupby(celltype_col, observed=False).size() / total_cells
+    # print(cell_fractions)
+    # cell_fractions.columns = [celltype_col, 'Count']
+    # print(cell_fractions)
     return cell_fractions
 
 # def cell_fraction_discrete(adata, groupby='bmi_groups_0', celltype_col='Class', save=None):
@@ -99,16 +102,15 @@ def cell_fraction_continuous(adata, x='bmi_lv', celltype_col='Class', total=None
 
         sns.regplot(x=x_values, y=y_values, ax=axs[ax_index], scatter=False)
 
+        # calculate correlation and p-value
         if len(x_values.dropna()) > 1 and len(y_values.dropna()) > 1:
             corr, p_value = pearsonr(x_values, y_values)
             print(f"Correlation between {x} and {celltype}: corr={corr}, p-value={p_value}")
-            p_label = ('*' if p_value < 0.05 else '') + f"p={round(p_value, 3)}"
-            # axs[ax_index].annotate(p_label, xy=(0.05, 0.95), xycoords='axes fraction',
-            #                        fontsize=10, color='black', verticalalignment='top')
+            sig_label = ('*' if p_value < 0.05 else '') + f" r^2={round(corr**2, 3)}, p={round(p_value, 3)}"
 
         axs[ax_index].set_xlabel(x)
         axs[ax_index].set_ylabel('Fraction')
-        axs[ax_index].set_title(f'{celltype} ({p_label})')
+        axs[ax_index].set_title(f'{celltype}\n{sig_label}')
     # fig.set_title(f"Cell fractions vs. {x}")
     plt.tight_layout()
 
@@ -121,18 +123,28 @@ def cell_fraction_continuous(adata, x='bmi_lv', celltype_col='Class', total=None
 
 if __name__ == "__main__":
     # in_path = "/home/anna_y/data/test/tiny_AD427MR/tiny_AD427MR.h5ad"
-    # in_path = "/home/anna_y/data/write/all/AD427MR_50k/AD427MR_50k.h5ad"
+    in_path = "/home/anna_y/data/write/all/AD427MR_50k/AD427MR_50k.h5ad"
     in_path = "/home/anna_y/data/write/all/AD427MR/AD427MR.h5ad"
+    print("in_path:", in_path)
 
-    # in_path = sys.argv[1]  # e.g. /home/anna_y/data/write/all/AD427MR/AD427MR.h5ad
     adata = sc.read_h5ad(in_path)
     print(adata)
 
+
+
+
     x = 'bmi_lv'
+    # x = 'bmi_normalized'
     # x = 'gpath'
     adata = adata[adata.obs[x].notna(), :].copy() # filter cells
 
-    for celltype_col in ['Class', 'Subclass', 'Subtype']:
-        out_path = in_path.replace('write', 'results/figures/cell_fraction').replace('.h5ad', f'_cell_fraction_{x}_{celltype_col}_cont.png')
-        print("out_path:", out_path)
-        cell_fraction_continuous(adata, x=x, celltype_col=celltype_col, save=out_path)
+    # for celltype_col in ['Class', 'Subclass', 'Subtype']:
+    celltype_col = sys.argv[1] # e.g. 'Class'
+
+    cell_fraction_df = compute_cell_fractions(adata, celltype_col=celltype_col)
+    print("Cell fractions by Class:", cell_fraction_df)
+    cell_fraction_df.to_csv(f"counts_{celltype_col}.csv", header=False)
+
+    out_path = in_path.replace('write', 'results/figures/cell_fraction').replace('.h5ad', f'_cell_fraction_{x}_{celltype_col}_cont.png')
+    print("out_path:", out_path)
+    cell_fraction_continuous(adata, x=x, celltype_col=celltype_col, save=out_path)
