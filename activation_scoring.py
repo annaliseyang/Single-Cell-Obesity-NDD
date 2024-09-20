@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     adata = sc.read_h5ad(in_path)
     print(f'Computing UMAP of mic_genes in {celltype}...', flush=True)
-    sc.tl.umap(adata, random_state=42)
+    # sc.tl.umap(adata, random_state=42)
     sc.pl.umap(adata, color=mic_genes, vmax='p99', save=f'_mic_genes_{celltype}.png')
     # group = adata[adata.obs['bmi_groups'] == 'bmi_20-25', :].copy()
     # adata = activation_score(group, mic_genes)

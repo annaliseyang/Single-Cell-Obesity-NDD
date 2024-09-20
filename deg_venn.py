@@ -9,6 +9,7 @@ def get_gene_list_from_txt(txt_file):
         return degs
 
 def get_gene_lists_dict(in_dir, classes):
+    """return a dictionary of gene lists, where the keys are cell types and the values are sets of genes."""
     gene_lists_dict = {}
     for class_name in classes:
         pos_txt = in_dir + "/" + class_name + "/positive.txt"
@@ -32,16 +33,20 @@ def venn_diagram(gene_lists_dict, save=None):
     if save:
         plt.savefig(save)
 
-if __name__ == "__main__":
-    classes = ["Exc_50k", "Inh", "Oli"]
+def venn_celltypes(classes, save=None):
+    """Generate a Venn diagram showing the overlap of DEGs between different cell types."""
     gene_lists_dict_class = get_gene_lists_dict("/home/anna_y/data/results/deg_bmi_normalized_v1/Class", classes)
+    common_genes = set.intersection(*gene_lists_dict_class.values())
+    print(f"Number of common genes among {classes}: {len(common_genes)}\n{common_genes}")
     # classes = tuple(gene_lists_dict_class.keys())
-    out_path = "/home/anna_y/data/results/figures/deg_bmi_normalized_v1/venn_Exc_Inh_Oli.png"
+    out_path = save if save else f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1/venn_{'_'.join(classes)}.png"
     venn_diagram(gene_lists_dict=gene_lists_dict_class, save=out_path)
     print(f"Venn diagram saved to {out_path}")
 
-    glial_cell_types = ["Ast", "Mic_Immune", "Oli"]
-    gene_lists_dict_glial = get_gene_lists_dict("/home/anna_y/data/results/deg_bmi_normalized_v1/Class", glial_cell_types)
-    out_path = "/home/anna_y/data/results/figures/deg_bmi_normalized_v1/venn_Ast_Mic_Immune_Oli.png"
-    venn_diagram(gene_lists_dict=gene_lists_dict_glial, save=out_path)
-    print(f"Venn diagram saved to {out_path}")
+
+if __name__ == "__main__":
+    classes = ["Exc_50k", "Inh", "Oli"]
+    venn_celltypes(classes)
+
+    glial_cell_types = ["Ast", "Mic_Immune", "OPC"]
+    venn_celltypes(glial_cell_types)
