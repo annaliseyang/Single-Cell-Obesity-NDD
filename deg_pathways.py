@@ -1,8 +1,11 @@
+import scanpy as sc
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
+
+from activation_scoring import activation_score
 
 def combine_go_results(results_dir):
     """Save a single CSV file with all GO enrichment results."""
@@ -76,7 +79,7 @@ def plot_heatmap(celltype, pos_path, neg_path, out_path, var='BestLogPInGroup', 
     print(f"Heatmap saved to {out_path}")
 
 
-def degs_in_pathway(go_term, results_path, out_path):
+def degs_in_pathway(go_term, results_path, out_path=None):
     """Return a list of genes in the given pathway."""
     # df = pd.read_excel(io=results_path, sheet_name='Annotation')
     print(go_term)
@@ -145,6 +148,8 @@ if __name__ == "__main__":
     for celltype in celltypes:
         # continue
         print(f"\nProcessing {celltype}...")
+        adata = sc.read_h5ad(f"/home/anna_y/data/write/Class/{celltype}/{celltype}.h5ad")
+
         # continue
         # celltype = dir.split('_')[0]
         # sign = dir.split('_')[1]
@@ -164,18 +169,37 @@ if __name__ == "__main__":
         plot_heatmap(celltype, pos_path, neg_path, out_path_all, all=True)
 
         # plot heatmap of top genes in each pathway
-        n_top = 3
+        # n_top = 3
+        # for go_term in pos_go_terms[:n_top]:
+        #     out_path_genes = f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/Class/{celltype}_positive_{go_term}.png"
+        #     genes_in_pathway_heatmap(go_term, pos_path, out_path_genes)
+        #     # genes_in_pathway_heatmap(go_term, neg_path, out_path_common)
+        # for go_term in neg_go_terms[:n_top]:
+        #     out_path_genes = f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/Class/{celltype}_negative_{go_term}.png"
+        #     # genes_in_pathway_heatmap(go_term, pos_path, out_path_common)
+        #     genes_in_pathway_heatmap(go_term, neg_path, out_path_genes)
+        # for go_term in common_go_terms:
+        #     out_path_genes = f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/Class/{celltype}_common_{go_term}.png"
+        #     genes_in_pathway_heatmap(go_term, pos_path, out_path_genes)
+
+        ###################
+        # plot activation scores for each gene in each pathway
+        n_top = 5
         for go_term in pos_go_terms[:n_top]:
-            out_path_genes = f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/Class/{celltype}_positive_{go_term}.png"
-            genes_in_pathway_heatmap(go_term, pos_path, out_path_genes)
-            # genes_in_pathway_heatmap(go_term, neg_path, out_path_common)
+            description = get_description(go_term, "/home/anna_y/data/results/deg_bmi_normalized_v1_metascape/Class/FINAL_GO_ALL.csv")
+            genes = degs_in_pathway(go_term, pos_path)
+            # print(f"Genes in {go_term}: {genes}")
+            print(f"Computing activation scores for {genes} in {go_term}: {description}...")
+            activation_score(adata, genes, celltype, "obesity_groups", score_name=f'{description} activation', save=f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/boxplot_{celltype}_positive_{go_term}_activation.png")
+            activation_score(adata, genes, celltype, "AD_states", score_name=f'{description} activation', save=f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/boxplot_{celltype}_positive_{go_term}_activation_AD_states.png")
+
         for go_term in neg_go_terms[:n_top]:
-            out_path_genes = f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/Class/{celltype}_negative_{go_term}.png"
-            # genes_in_pathway_heatmap(go_term, pos_path, out_path_common)
-            genes_in_pathway_heatmap(go_term, neg_path, out_path_genes)
-        for go_term in common_go_terms:
-            out_path_genes = f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/Class/{celltype}_common_{go_term}.png"
-            genes_in_pathway_heatmap(go_term, pos_path, out_path_genes)
+            description = get_description(go_term, "/home/anna_y/data/results/deg_bmi_normalized_v1_metascape/Class/FINAL_GO_ALL.csv")
+            genes = degs_in_pathway(go_term, neg_path)
+            # print(f"Genes in {go_term}: {genes}")
+            print(f"Computing activation scores for {genes} in {go_term}: {description}...")
+            activation_score(adata, genes, celltype, "obesity_groups", score_name=f'{description} activation', save=f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/boxplot_{celltype}_negative_{go_term}_activation.png")
+            activation_score(adata, genes, celltype, "AD_states", score_name=f'{description} activation', save=f"/home/anna_y/data/results/figures/deg_bmi_normalized_v1_metascape/boxplot_{celltype}_negative_{go_term}_activation_AD_states.png")
 
         # break
 
