@@ -51,7 +51,7 @@
     echo "Job Completed: $SLURM_JOB_ID"
     conda deactivate
 
-} 2>&1 | tee -a "/home/anna_y/scRNA/log/slurm-$SLURM_JOB_ID-${2}.out"
+} 2>&1 | tee -a "/home/anna_y/scRNA/log/slurm-$SLURM_JOB_ID-$(basename "$2").out"
 
 
 # remove the output file after job is done
