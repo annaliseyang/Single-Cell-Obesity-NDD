@@ -3,7 +3,7 @@ library(Seurat)
 library(SeuratDisk)
 source("normalize_bmi.R")
 
-var <- "bmi_normalized"
+var <- "bmi_norm"
 # var <- "AD_states"
 indir = commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
 filename <- list.files(indir, pattern=".rds")[1]
@@ -48,6 +48,7 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
   covariates = covariates[covariates %in% colnames(Seurat_Obj@meta.data)]
   # Seurat_Obj@meta.data$pathology <- as.factor(Seurat_Obj@meta.data$pathology) # convert to factor
   head(Seurat_Obj@meta.data$pathology)
+  print(Seurat_Obj@meta.data)
 
   print("Covariates:")
   print(covariates)
@@ -155,12 +156,13 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
 
   neb_df <- neb_df[order(neb_df[[paste0("p_", pathology)]]), ]
 
-  out_path_all <- file.path(out_dir, paste0(name, ".", pathology, ".All.tsv"))
+  covars_str = paste(covariates, collapse = "_")
+  out_path_all <- file.path(out_dir, paste0(name, ".", pathology, ".", covars_str, ".All.tsv"))
   write.table(neb_df, out_path_all, sep = "\t", row.names = FALSE, quote = FALSE)
   print(paste("All results saved in:", out_path_all))
 
   results <- neb_df[, c("gene", paste0("p_", pathology), paste0("logFC_", pathology), "FDR", "log2FC")]
-  out_path_clean <- file.path(out_dir, paste0(name, ".", pathology, ".Clean.tsv"))
+  out_path_clean <- file.path(out_dir, paste0(name, ".", pathology, ".", covars_str, ".Clean.tsv"))
   write.table(results, out_path_clean, sep = "\t", row.names = FALSE, quote = FALSE)
   print(paste("Clean results saved in:", out_path_clean))
 }

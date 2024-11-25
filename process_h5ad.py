@@ -30,8 +30,8 @@ def define_bmi_groups(adata):
             bmi_groups[adata.obs['bmi_lv'] >= min_bmi] = group
         adata.obs[f'bmi_groups_{i}'] = bmi_groups
 
-    # save a copy of the original bmi_groups column
-    adata.obs['bmi_groups_copy'] = adata.obs['bmi_groups'].copy()
+    # # save a copy of the original bmi_groups column
+    # adata.obs['bmi_groups_copy'] = adata.obs['bmi_groups'].copy()
     adata.obs['bmi_groups'] = adata.obs['bmi_groups_0'].copy()
     return adata
 
@@ -63,7 +63,9 @@ def normalize_bmi(adata):
 
 
 if __name__ == '__main__':
-    in_path = sys.argv[1] # path to AnnData file
+    in_path = "/home/anna_y/data/obesity_new/rna3.AD427.2073372.Oct22_2024.h5ad"
+    # in_path = sys.argv[1] # path to AnnData file
+
     adata = sc.read_h5ad(in_path)
     print(adata)
 

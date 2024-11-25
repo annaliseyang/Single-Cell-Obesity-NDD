@@ -24,7 +24,7 @@ normalize_bmi = function(seurat_obj, save=NULL) {
     bmi_normalized[non_missing_bmi] = (bmi_lv[non_missing_bmi] - mean_bmi) / sd_bmi
 
     # Store the normalized BMI in the metadata
-    seurat_obj@meta.data$bmi_normalized = bmi_normalized
+    seurat_obj@meta.data$bmi_norm = bmi_normalized
     # print(head(seurat_obj@meta.data))
 
     # Save the modified Seurat object if a path is provided

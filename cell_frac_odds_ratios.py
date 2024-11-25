@@ -11,7 +11,8 @@ def compute_continuous_odds_ratios(adata, continuous_var='bmi_lv', celltype_col=
 
     odds_ratios = []
     conf_intervals = []
-
+    # adata.obs[continuous_var] = pd.to_numeric(adata.obs[continuous_var], errors='coerce')
+    adata.obs[continuous_var] = adata.obs[continuous_var].astype(float)
     # Loop through each cell type and fit logistic regression
     for celltype in celltypes:
         # Binary outcome: Does this cell type exist for each observation?
@@ -44,7 +45,7 @@ def plot_continuous_odds_ratios(odds_ratios_df, conf_intervals_df, continuous_va
     width = max(6, len(plot_df) * 0.3)
     # plt.figure(figsize=(12, 6))
     plt.figure(figsize=(width, 6))
-    sns.barplot(x='Cell Type', y='Odds Ratio', data=plot_df, color='skyblue', ci=None)
+    sns.barplot(x='Cell Type', y='Odds Ratio', data=plot_df, color='skyblue', errorbar=None)
 
     # Add error bars for confidence intervals
     plt.errorbar(x=plot_df['Cell Type'],
@@ -54,8 +55,8 @@ def plot_continuous_odds_ratios(odds_ratios_df, conf_intervals_df, continuous_va
                  fmt='none', c='black', capsize=5)
 
     plt.axhline(1, color='red', linestyle='--')
-    y_min = odds_ratios_df['Odds Ratio'].min() * 0.98
-    y_max = odds_ratios_df['Odds Ratio'].max() * 1.02
+    y_min = plot_df['CI Lower'].min() * 0.98
+    y_max = plot_df['CI Upper'].max() * 1.02
     plt.ylim(top=y_max, bottom=y_min)
     plt.title(f'Odds Ratios {continuous_var} {celltype_col} with 95% confidence intervals')
     plt.xticks(rotation=90)
@@ -70,13 +71,14 @@ def plot_continuous_odds_ratios(odds_ratios_df, conf_intervals_df, continuous_va
 
 if __name__ == "__main__":
     # in_path = "/home/anna_y/data/write/all/AD427MR_50k/AD427MR_50k.h5ad" # For testing
-    in_path = "/home/anna_y/data/write/all/AD427MR/AD427MR.h5ad"
+    # in_path = "/home/anna_y/data/write/all/AD427MR/AD427MR.h5ad"
+    in_path = "/home/anna_y/data/obesity_new/rna3.AD427.2073372.Oct22_2024.h5ad" # new dataset path
     print("in_path:", in_path)
 
     adata = sc.read_h5ad(in_path)
     print(adata)
 
-    continuous_var = 'bmi_lv'
+    continuous_var = 'bmi_normalized'
     celltype_col = sys.argv[1] if len(sys.argv) > 1 else 'Class'
 
     # Filter out missing BMI values
@@ -86,7 +88,7 @@ if __name__ == "__main__":
     odds_ratios_df, conf_intervals_df = compute_continuous_odds_ratios(adata, continuous_var=continuous_var, celltype_col=celltype_col)
 
     # Plot the odds ratios
-    out_path = in_path.replace('.h5ad', f'_continuous_odds_ratios.png')
-    out_path = in_path.replace('write', 'results/figures/cell_fraction').replace('.h5ad', f'_cell_fraction_{celltype_col}_odds_ratios.png')
+    # out_path = in_path.replace('write', 'results/figures/obesity_new/cell_fraction').replace('.h5ad', f'_cell_fraction_{continuous_var}_{celltype_col}_odds_ratios.png')
+    out_path = f"/home/anna_y/data/figures/obesity_new/cell_fraction/rna3.AD427.2073372.Oct22_2024_cell_fraction_{continuous_var}_{celltype_col}_odds_ratios.png"
 
     plot_continuous_odds_ratios(odds_ratios_df, conf_intervals_df, continuous_var, celltype_col, save=out_path)
