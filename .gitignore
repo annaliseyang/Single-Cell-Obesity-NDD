@@ -13,3 +13,4 @@ scRNA.Rproj
 .DS_Store
 *.yml
 .Rproj.user
+*output*

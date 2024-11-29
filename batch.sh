@@ -7,11 +7,14 @@
 # pattern=/home/anna_y/data/obesity_new/*/*.h5ad
 # script=export_info_create_rds.sh
 
-pattern=/home/anna_y/data/obesity_new/Subtype/*/
-script=nebula.R
+# pattern=/home/anna_y/data/write/Class/*/
+# script=filter_cells.R
+
+# pattern=/home/anna_y/data/write/Class/*/
+# script=nebula.R
 
 # pattern=/home/anna_y/data/results/deg_bmi_normalized_v1/*/*/*.Clean.tsv
-# pattern=/home/anna_y/data/results/deg_bmi_normalized_v1/AD_states/*/*/*/*.Clean.tsv
+# pattern=/home/anna_y/data/write/*/*/*.Clean.tsv
 # script=deg_results.py
 
 # pattern=/home/anna_y/data/write/Subclass/*/*.h5ad
@@ -26,5 +29,5 @@ for file in $pattern; do
 
   # python $script $file
   bash submit.sh $script $file
-  exit
+  # exit
 done

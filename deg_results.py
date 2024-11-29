@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import sys
+import time
 
 def filter_deg_results(results_file, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cutoff=0.2):
     # Read the DEG results file
@@ -10,7 +11,7 @@ def filter_deg_results(results_file, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cuto
     # Filter the results based on the desired log2FC and p-value cutoff
     results_filtered = results[(abs(results['log2FC']) > log2fc_cutoff) &
                            (results['FDR'] < fdr_cutoff) &
-                           (results['p_bmi_normalized'] < p_cutoff)]
+                           (results['p_bmi_norm'] < p_cutoff)]
     out_path = results_file.replace('.tsv', '.Filtered.tsv')
     results_filtered.to_csv(out_path, sep='\t', index=False)
     print(f'Filtered DEG results saved to: {out_path}')
@@ -25,6 +26,7 @@ def rank_deg_results(results_file, sort_by='log2FC'):
     results_sorted.to_csv(out_path, sep='\t', index=False)
     print(f'Sorted DEG results saved to: {out_path}')
     return out_path
+
 
 def get_top_degs(results_file, n_top=20, positive=True):
     """
@@ -43,22 +45,34 @@ def get_top_degs(results_file, n_top=20, positive=True):
         top_genes = results.head(n_top)['gene'].tolist() if n_top else results['gene'].tolist()
     return top_genes
 
-if __name__ == "__main__":
-    results_file = sys.argv[1]
-    results_file_ranked = rank_deg_results(results_file)
-    results_file_filtered = filter_deg_results(results_file_ranked, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cutoff=0.1)
 
+def save_top_degs_to_txt(results_file_filtered):
     pos_degs = get_top_degs(results_file_filtered, n_top=None, positive=True)
     neg_degs = get_top_degs(results_file_filtered, n_top=None, positive=False)
     print(f'Top positive DEGs: {pos_degs}')
     print(f'Top negative DEGs: {neg_degs}')
 
     # save the top genes to a txt file
-    pos_txt_path = os.path.dirname(results_file_filtered) + '/positive.txt'
-    neg_txt_path = os.path.dirname(results_file_filtered) + '/negative.txt'
+    pos_txt_path = results_file_filtered.replace('.tsv', '.pos.txt')
+    neg_txt_path = results_file_filtered.replace('.tsv', '.neg.txt')
     with open(pos_txt_path, 'w') as f:
         f.write('\n'.join(pos_degs))
         print(f'Top positive genes saved to {pos_txt_path}')
     with open(neg_txt_path, 'w') as f:
         f.write('\n'.join(neg_degs))
         print(f'Top negative genes saved to {neg_txt_path}')
+
+
+if __name__ == "__main__":
+    results_file = sys.argv[1]
+
+    while not os.path.isfile(results_file):
+        print(f'Error: {results_file} does not exist. Checking again in 5 minutes.', flush=True)
+        time.sleep(300)
+        results_file = sys.argv[1]
+    print(f'Reading DEG results from: {results_file}', flush=True)
+
+    results_file_ranked = rank_deg_results(results_file)
+    results_file_filtered = filter_deg_results(results_file_ranked, p_cutoff=0.05, fdr_cutoff=0.05, log2fc_cutoff=0.1)
+
+    save_top_degs_to_txt(results_file_filtered)

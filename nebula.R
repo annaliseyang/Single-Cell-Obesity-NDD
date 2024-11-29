@@ -6,7 +6,7 @@ source("normalize_bmi.R")
 var <- "bmi_norm"
 # var <- "AD_states"
 indir = commandArgs(T)[1] # eg. /home/anna_y/data/write/Class/Ast/
-filename <- list.files(indir, pattern=".rds")[1]
+filename <- list.files(indir, pattern=".PFC.rds")[1]
 
 while (is.na(filename) || length(filename) == 0) {
   print("No .rds file found in the input directory. Checking again in 5 minutes.")
@@ -19,7 +19,8 @@ print(paste("Found .rds file:", filename))
 
 name <- sub(".rds", "", filename)
 sample.col <- "Sample"
-out_dir <- sub("write", paste0("results", "/deg_", var, "_v1"), indir)
+# out_dir <- sub("write", paste0("results", "/deg_", var, "_v1"), indir)
+out_dir <- indir
 
 # create the out_dir if it doesn't exist
 dir.create(out_dir, recursive = TRUE)
@@ -33,7 +34,7 @@ seurat_obj <- readRDS(file.path(indir, filename))
 # normalize bmi and filter cells
 seurat_obj <- normalize_bmi(seurat_obj, save=file.path(indir, filename))
 seurat_obj <- filter_cells(seurat_obj, var=var)
-print(seurat_obj)
+# print(seurat_obj)
 
 # head(seurat_obj@meta.data)
 print("Metadata dimensions:")
@@ -45,10 +46,11 @@ deg.nebula <- function(Seurat_Obj, pathology, sample.col,
                        cpc = 0, reml = 1) {
 
   covariates = c("msex", "pmi", "total_counts", "age_death")
+  # covariates = c("msex", "pmi", "total_counts", "age_death", "ADdiag3types")
   covariates = covariates[covariates %in% colnames(Seurat_Obj@meta.data)]
   # Seurat_Obj@meta.data$pathology <- as.factor(Seurat_Obj@meta.data$pathology) # convert to factor
   head(Seurat_Obj@meta.data$pathology)
-  print(Seurat_Obj@meta.data)
+  head(Seurat_Obj@meta.data)
 
   print("Covariates:")
   print(covariates)
