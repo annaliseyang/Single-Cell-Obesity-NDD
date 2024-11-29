@@ -7,18 +7,19 @@
 # pattern=/home/anna_y/data/obesity_new/*/*.h5ad
 # script=export_info_create_rds.sh
 
-# pattern=/home/anna_y/data/write/Class/*/
+# pattern=/home/anna_y/data/write/Subclass/*/*.h5ad
+# script=subset.py
+
+# pattern=/home/anna_y/data/write/Subtype/*/
 # script=filter_cells.R
 
 # pattern=/home/anna_y/data/write/Class/*/
 # script=nebula.R
 
-# pattern=/home/anna_y/data/results/deg_bmi_normalized_v1/*/*/*.Clean.tsv
+# # pattern=/home/anna_y/data/results/deg_bmi_normalized_v1/*/*/*.Clean.tsv
 # pattern=/home/anna_y/data/write/*/*/*.Clean.tsv
 # script=deg_results.py
 
-# pattern=/home/anna_y/data/write/Subclass/*/*.h5ad
-# # script=deg_heatmap.py
 # # script=deg_umap.py
 # script=deg_umap_gene.py
 
@@ -29,5 +30,5 @@ for file in $pattern; do
 
   # python $script $file
   bash submit.sh $script $file
-  # exit
+  exit
 done

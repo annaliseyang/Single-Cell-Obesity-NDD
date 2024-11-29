@@ -27,7 +27,8 @@ def heatmap(adata, deg_results_file, name, n_top=50, save=None):
     degs = results['gene'].tolist()[:n_top]
     print(f'Top {n_top} DEGs: {degs}')
 
-    save = f'_{name}.png'
+    if not save:
+        save = f'_{name}.png'
     sc.pl.heatmap(adata, var_names=degs, log=False, standard_scale='var', vmax=1, groupby='bmi_groups', save=save)
 
 def heatmap_with_title(adata, deg_results_file, name, n_top=50, save=None):
@@ -65,9 +66,8 @@ if __name__ == "__main__":
 
     adata = sc.read_h5ad(in_path)
     adata = adata[adata.obs['bmi_lv'].notna(), :]
-    # deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
-    deg_results_file = in_path.replace('write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
+    deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
     print(f'Loading DEG results file: {deg_results_file}')
-    out_path = f'_{name}.png'
+    out_path = f'_{name}.PFC.bmi_norm.msex_pmi_total_counts_age_death.Clean.png'
     heatmap(adata, deg_results_file, name, save=out_path)
     print(f'Heatmap saved as {out_path}')
