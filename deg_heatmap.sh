@@ -1,9 +1,10 @@
 #!/bin/bash
 
 group=Class
-pattern=/home/anna_y/data/write/$group/*/*.PFC.h5ad # input file
+pattern=/home/anna_y/data/write/$group/*/*.PFC/*.PFC.h5ad # input file
 # results_file=/home/anna_y/data/write/$group/*/*.PFC.h5ad
-script=deg_heatmap.py
+# script=deg_heatmap.py
+script=deg_umap.py
 
 # Loop through each file in the directory
 for file in $pattern; do
@@ -11,7 +12,7 @@ for file in $pattern; do
   echo "Running $script on $file"
 
   results_file=$file | sed 's/\.h5ad$/\.bmi_norm.msex_pmi_total_counts_age_death.Clean.tsv/'
-  results_file=$(echo "$file" | sed 's/\.h5ad$/\.bmi_norm.msex_pmi_total_counts_age_death.Clean.tsv/')
+  results_file=$(echo "$file" | sed 's/\.h5ad$/\.bmi_norm.msex_pmi_total_counts_age_death_ADdiag3types.Clean.tsv/')
   echo "Results file: $results_file"
 
   # python $script $file

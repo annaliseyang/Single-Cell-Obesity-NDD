@@ -10,7 +10,8 @@ print(adata)
 
 # parse file name
 in_dir = '/'.join(in_path.split('/')[:-1])
-name = in_path.split('/')[-1].split('.')[0]
+# name = in_path.split('/')[-1].split('.')[0]
+name = in_path.split('/')[-1].replace('.h5ad', '')
 celltype = name
 print(f"Processing sample: {name}", flush=True)
 print(f"Cell type: {celltype}", flush=True)

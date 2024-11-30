@@ -37,7 +37,8 @@ def deg_umap(adata, deg_results_file, n_top=3, save=None):
 
 if __name__ == "__main__":
     in_path = sys.argv[1] # e.g. /home/anna_y/data/write/Subclass/Ast/Ast.h5ad
-    name = os.path.basename(in_path).split('.')[0] # e.g. Ast
+    # name = os.path.basename(in_path).split('.')[0] # e.g. Ast
+    name = os.path.basename(in_path).replace('.h5ad', '')
 
     print(f'Loading Anndata file: {in_path}', flush=True)
     print(f'Name: {name}', flush=True)
@@ -45,11 +46,11 @@ if __name__ == "__main__":
     adata = sc.read_h5ad(in_path)
     adata = adata[adata.obs['bmi_lv'].notna(), :] # remove cells with missing bmi values
 
-    # deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
-    deg_results_file = in_path.replace('write', 'results/deg_bmi_normalized').replace('.h5ad', '.bmi_normalized.Ranked.Filtered.tsv')
+    deg_results_file = sys.argv[2] # e.g. /home/anna_y/data/results/deg_bmi_normalized/Subclass/Ast/Ast.bmi_normalized.Clean.tsv
     print(f'Loading DEG results file: {deg_results_file}', flush=True)
     n_top = 3 # number of top positive and negative DEGs to plot
 
-    out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/celltypes/umap_{name}_bmi_groups.png'
+    # out_path = f'/home/anna_y/data/results/figures/deg_bmi_normalized/celltypes/umap_{name}.bmi_groups.png'
+    out_path = deg_results_file.replace('.tsv', '.png')
     deg_umap(adata, deg_results_file, n_top=n_top, save=out_path)
     print(f'UMAP saved to {out_path}')

@@ -4,17 +4,18 @@
 # pattern=$(find /home/anna_y/data/write/ -type f -name "*.h5ad")
 # script=bmi_groups.py
 
-# pattern=/home/anna_y/data/obesity_new/*/*.h5ad
+# pattern=/home/anna_y/data/write/Class/*/*.PFC.h5ad
 # script=export_info_create_rds.sh
 
-# pattern=/home/anna_y/data/write/Subclass/*/*.h5ad
+# pattern=/home/anna_y/data/write/Class/*/*.h5ad
 # script=subset.py
 
 # pattern=/home/anna_y/data/write/Subtype/*/
 # script=filter_cells.R
 
-# pattern=/home/anna_y/data/write/Class/*/
-# script=nebula.R
+# pattern=/home/anna_y/data/write/Subclass/*/
+pattern=/home/anna_y/data/write/Class/*/*.PFC/
+script=nebula.R
 
 # # pattern=/home/anna_y/data/results/deg_bmi_normalized_v1/*/*/*.Clean.tsv
 # pattern=/home/anna_y/data/write/*/*/*.Clean.tsv
@@ -30,5 +31,5 @@ for file in $pattern; do
 
   # python $script $file
   bash submit.sh $script $file
-  exit
+  # exit
 done
